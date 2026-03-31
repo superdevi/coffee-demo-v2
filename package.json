@@ -1,0 +1,17 @@
+{
+  "name": "coffee-demo-v2",
+  "version": "1.0.0",
+  "description": "Super Devi Coffee Mini Games — Guerrilla marketing for Chinese coffee festival",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "Super Devi",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^8.0.3"
+  }
+}

@@ -1,0 +1,288 @@
+/* ============================================
+   TAOPUNK DESIGN SYSTEM
+   Eastern mystical + Cyberpunk + Cute + Premium
+   ============================================ */
+
+/* --- Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  /* --- Core Palette --- */
+  --espresso: #1a0e0a;
+  --crema: #d4a574;
+  --crema-light: #e8c9a0;
+  --jade: #2dd4a8;
+  --jade-dark: #1a9e7a;
+  --gold: #f0c040;
+  --gold-warm: #e8a020;
+  --amber: #d4740a;
+  --neon-pink: #ff2d7b;
+  --neon-cyan: #00f5d4;
+  --neon-purple: #b24dff;
+  --ink: #0d0d0d;
+  --paper: #faf5ef;
+  --mist: rgba(255, 255, 255, 0.06);
+  --smoke: rgba(0, 0, 0, 0.5);
+
+  /* --- Semantic Colors --- */
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #121218;
+  --bg-card: rgba(26, 14, 10, 0.8);
+  --text-primary: #faf5ef;
+  --text-secondary: #a89888;
+  --text-accent: var(--jade);
+  --border-glow: var(--jade);
+  --danger: #ff4444;
+
+  /* --- Typography --- */
+  --font-display: 'Noto Serif SC', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+  /* --- Spacing --- */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+
+  /* --- Borders & Radius --- */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  /* --- Shadows & Glows --- */
+  --glow-jade: 0 0 20px rgba(45, 212, 168, 0.3);
+  --glow-gold: 0 0 20px rgba(240, 192, 64, 0.3);
+  --glow-pink: 0 0 20px rgba(255, 45, 123, 0.3);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+
+  /* --- Transitions --- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 600ms;
+}
+
+/* --- Reset --- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* --- Taopunk Background --- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 80%, rgba(45, 212, 168, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(178, 77, 255, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(212, 165, 116, 0.03) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* --- Utility Classes --- */
+.screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  transition: opacity var(--duration-normal) var(--ease-in-out);
+}
+
+.screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.text-display {
+  font-family: var(--font-display);
+  font-weight: 900;
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1px solid rgba(45, 212, 168, 0.3);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.btn:active {
+  transform: scale(0.96);
+  border-color: var(--jade);
+  box-shadow: var(--glow-jade);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--jade-dark), var(--jade));
+  border-color: var(--jade);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.btn-primary:active {
+  box-shadow: 0 0 30px rgba(45, 212, 168, 0.5);
+}
+
+.btn-large {
+  padding: var(--space-lg) var(--space-xl);
+  font-size: 1.2rem;
+  border-radius: var(--radius-lg);
+}
+
+/* --- Cards --- */
+.card {
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-card);
+  transition: all var(--duration-normal) var(--ease-out-expo);
+}
+
+.card:active {
+  transform: scale(0.98);
+  border-color: rgba(45, 212, 168, 0.3);
+  box-shadow: var(--glow-jade), var(--shadow-card);
+}
+
+/* --- Input --- */
+.input {
+  width: 100%;
+  padding: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color var(--duration-fast);
+}
+
+.input:focus {
+  border-color: var(--jade);
+  box-shadow: var(--glow-jade);
+}
+
+.input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+/* --- Leaderboard --- */
+.leaderboard {
+  width: 100%;
+  max-width: 360px;
+}
+
+.leaderboard-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: var(--space-md);
+}
+
+.leaderboard-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.leaderboard-row.highlight {
+  background: rgba(45, 212, 168, 0.1);
+  border-color: rgba(45, 212, 168, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+.leaderboard-rank {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  min-width: 28px;
+}
+
+.leaderboard-rank.top-3 {
+  color: var(--gold);
+}
+
+.leaderboard-name {
+  flex: 1;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaderboard-score {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--jade);
+}
+
+/* --- Taopunk Decorative --- */
+.taopunk-divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--jade), transparent);
+  margin: var(--space-lg) auto;
+}
+
+/* --- Prevent zoom/scroll on mobile --- */
+html, body {
+  overscroll-behavior: none;
+}
+
+input, textarea, select {
+  font-size: 16px; /* prevents iOS zoom on focus */
+}

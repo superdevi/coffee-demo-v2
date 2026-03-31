@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>拉花 · Latte Art — 8.88</title>
+  <link rel="stylesheet" href="/shared/theme.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <a href="/" class="back-btn">←</a>
+  <div class="bg-glow"></div>
+
+  <!-- ====== GAME SCREEN ====== -->
+  <div id="game-screen" class="screen game-screen">
+
+    <!-- Cup SVG -->
+    <div class="cup-container">
+      <div class="heartbeat-ring"></div>
+      <div class="overflow-ring"></div>
+
+      <!-- Pour stream -->
+      <div class="pour-stream"></div>
+
+      <!-- Steam -->
+      <div class="steam-container">
+        <div class="steam"></div>
+        <div class="steam"></div>
+        <div class="steam"></div>
+      </div>
+
+      <svg class="cup-svg" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Crema gradient -->
+          <radialGradient id="crema-gradient" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#c8956a"/>
+            <stop offset="40%" stop-color="#a0714e"/>
+            <stop offset="80%" stop-color="#5a3825"/>
+            <stop offset="100%" stop-color="#3d2216"/>
+          </radialGradient>
+
+          <!-- Reveal mask -->
+          <radialGradient id="reveal-gradient" cx="50%" cy="55%" r="50%"
+                          gradientUnits="objectBoundingBox">
+            <stop offset="70%" stop-color="white"/>
+            <stop offset="100%" stop-color="black"/>
+          </radialGradient>
+
+          <mask id="reveal-mask">
+            <circle id="reveal-mask-circle" cx="130" cy="138" r="0" fill="url(#reveal-gradient)"/>
+          </mask>
+        </defs>
+
+        <!-- Cup outer rim -->
+        <circle cx="130" cy="130" r="120" fill="none" stroke="#8a7a6a" stroke-width="3" opacity="0.3"/>
+
+        <!-- Cup inner rim -->
+        <circle cx="130" cy="130" r="112" fill="none" stroke="#6a5a4a" stroke-width="1.5" opacity="0.2"/>
+
+        <!-- Coffee surface (crema) -->
+        <circle cx="130" cy="130" r="108" fill="url(#crema-gradient)"/>
+
+        <!-- Crema speckle texture -->
+        <g opacity="0.15">
+          <circle cx="100" cy="110" r="1" fill="#d4a574"/>
+          <circle cx="150" cy="100" r="0.8" fill="#d4a574"/>
+          <circle cx="120" cy="155" r="1.2" fill="#d4a574"/>
+          <circle cx="165" cy="140" r="0.7" fill="#d4a574"/>
+          <circle cx="90" cy="145" r="0.9" fill="#d4a574"/>
+          <circle cx="140" cy="165" r="0.6" fill="#d4a574"/>
+          <circle cx="110" cy="125" r="1" fill="#d4a574"/>
+          <circle cx="155" cy="120" r="0.8" fill="#d4a574"/>
+          <circle cx="130" cy="95" r="0.5" fill="#d4a574"/>
+          <circle cx="95" cy="130" r="0.7" fill="#d4a574"/>
+          <circle cx="170" cy="155" r="0.6" fill="#d4a574"/>
+        </g>
+
+        <!-- Milk impact glow (visible while pouring) -->
+        <circle id="milk-glow" cx="130" cy="138" r="0" fill="rgba(255,255,255,0.15)" style="opacity:0"/>
+
+        <!-- ===== ROSETTA LATTE ART ===== -->
+        <g mask="url(#reveal-mask)">
+          <!-- Central stem -->
+          <line x1="130" y1="180" x2="130" y2="88" stroke="#f0e6d6" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- Leaf pair 1 (bottom, largest) -->
+          <path d="M130,175 Q105,168 98,160 Q105,165 130,170" fill="#f0e6d6" opacity="0.9"/>
+          <path d="M130,175 Q155,168 162,160 Q155,165 130,170" fill="#f0e6d6" opacity="0.9"/>
+
+          <!-- Leaf pair 2 -->
+          <path d="M130,162 Q108,155 100,146 Q110,152 130,158" fill="#ede0d0" opacity="0.85"/>
+          <path d="M130,162 Q152,155 160,146 Q150,152 130,158" fill="#ede0d0" opacity="0.85"/>
+
+          <!-- Leaf pair 3 -->
+          <path d="M130,149 Q112,143 105,135 Q114,140 130,146" fill="#e8d8c5" opacity="0.8"/>
+          <path d="M130,149 Q148,143 155,135 Q146,140 130,146" fill="#e8d8c5" opacity="0.8"/>
+
+          <!-- Leaf pair 4 -->
+          <path d="M130,137 Q115,132 110,125 Q117,130 130,134" fill="#e3d0bb" opacity="0.75"/>
+          <path d="M130,137 Q145,132 150,125 Q143,130 130,134" fill="#e3d0bb" opacity="0.75"/>
+
+          <!-- Leaf pair 5 -->
+          <path d="M130,126 Q118,122 114,116 Q120,120 130,123" fill="#ddc8b0" opacity="0.7"/>
+          <path d="M130,126 Q142,122 146,116 Q140,120 130,123" fill="#ddc8b0" opacity="0.7"/>
+
+          <!-- Leaf pair 6 (top, smallest) -->
+          <path d="M130,116 Q121,113 118,108 Q123,111 130,114" fill="#d8c0a5" opacity="0.65"/>
+          <path d="M130,116 Q139,113 142,108 Q137,111 130,114" fill="#d8c0a5" opacity="0.65"/>
+
+          <!-- Heart at apex -->
+          <path d="M130,92 Q124,86 122,90 Q122,94 130,100 Q138,94 138,90 Q136,86 130,92Z"
+                fill="#f0e6d6" opacity="0.9"/>
+        </g>
+
+        <!-- Cup rim (on top of everything) -->
+        <circle cx="130" cy="130" r="118" fill="none" stroke="#a89070" stroke-width="5" opacity="0.25"/>
+        <!-- Rim highlight -->
+        <path d="M40,100 A118,118 0 0,1 130,12" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
+      </svg>
+    </div>
+
+    <!-- Timer -->
+    <div class="timer text-mono">0.00</div>
+
+    <!-- Pour Button -->
+    <div class="pour-btn-area">
+      <button class="pour-btn">倒奶<br>POUR</button>
+      <div class="pour-hint">按住倒奶 · Hold to Pour</div>
+    </div>
+  </div>
+
+  <!-- ====== RESULT SCREEN ====== -->
+  <div id="result-screen" class="screen result-screen hidden">
+
+    <!-- Mini cup showing revealed state -->
+    <svg id="result-cup-svg" class="result-cup" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="result-crema" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#c8956a"/>
+          <stop offset="40%" stop-color="#a0714e"/>
+          <stop offset="80%" stop-color="#5a3825"/>
+          <stop offset="100%" stop-color="#3d2216"/>
+        </radialGradient>
+        <radialGradient id="result-reveal-grad" cx="50%" cy="55%" r="50%"
+                        gradientUnits="objectBoundingBox">
+          <stop offset="70%" stop-color="white"/>
+          <stop offset="100%" stop-color="black"/>
+        </radialGradient>
+        <mask id="result-reveal-mask">
+          <circle id="result-reveal-circle" cx="55" cy="58" r="0" fill="url(#result-reveal-grad)"/>
+        </mask>
+      </defs>
+      <circle cx="55" cy="55" r="50" fill="url(#result-crema)"/>
+      <g mask="url(#result-reveal-mask)">
+        <line x1="55" y1="78" x2="55" y2="34" stroke="#f0e6d6" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M55,75 Q44,71 40,67 Q45,70 55,73" fill="#f0e6d6" opacity="0.9"/>
+        <path d="M55,75 Q66,71 70,67 Q65,70 55,73" fill="#f0e6d6" opacity="0.9"/>
+        <path d="M55,66 Q46,63 43,58 Q47,61 55,64" fill="#ede0d0" opacity="0.85"/>
+        <path d="M55,66 Q64,63 67,58 Q63,61 55,64" fill="#ede0d0" opacity="0.85"/>
+        <path d="M55,57 Q48,55 46,50 Q49,53 55,55" fill="#e8d8c5" opacity="0.8"/>
+        <path d="M55,57 Q62,55 64,50 Q61,53 55,55" fill="#e8d8c5" opacity="0.8"/>
+        <path d="M55,40 Q52,37 51,39 Q51,41 55,44 Q59,41 59,39 Q58,37 55,40Z" fill="#f0e6d6" opacity="0.9"/>
+      </g>
+      <circle cx="55" cy="55" r="49" fill="none" stroke="#a89070" stroke-width="2.5" opacity="0.25"/>
+    </svg>
+
+    <div id="result-time" class="result-time">0.00</div>
+    <div id="result-delta" class="result-delta">+0.00s</div>
+    <div id="result-grade" class="result-grade">—</div>
+    <div id="result-message" class="result-message"></div>
+
+    <div class="taopunk-divider"></div>
+
+    <!-- Leaderboard -->
+    <div id="leaderboard-container"></div>
+
+    <!-- Actions -->
+    <div class="result-actions">
+      <button id="btn-again" class="btn btn-primary">再来 · Again</button>
+      <a href="/" class="btn">换游戏 · Switch</a>
+    </div>
+  </div>
+
+  <script type="module" src="./game.js"></script>
+</body>
+</html>
