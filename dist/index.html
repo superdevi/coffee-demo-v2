@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -13,21 +14,12 @@
       min-height: 100dvh;
       justify-content: center;
       background:
-        linear-gradient(180deg, rgba(18,12,8,0.65) 0%, rgba(18,12,8,0.45) 40%, rgba(18,12,8,0.45) 60%, rgba(18,12,8,0.65) 100%),
+        linear-gradient(180deg, rgba(18, 12, 8, 0.65) 0%, rgba(18, 12, 8, 0.45) 40%, rgba(18, 12, 8, 0.45) 60%, rgba(18, 12, 8, 0.65) 100%),
         url('/assets/wooden-BFmWdFg-.png') center center / cover;
       background-color: var(--wood-base);
     }
 
-    #bg-canvas {
-      position: fixed;
-      inset: 0;
-      z-index: 2;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    /* Frosted dark panel over Three.js canvas */
+    /*  Content panel */
     .content-panel {
       display: flex;
       flex-direction: column;
@@ -35,13 +27,12 @@
       width: 100%;
       max-width: 380px;
       padding: var(--space-2xl) var(--space-xl);
-      background: rgba(10, 8, 6, 0.6);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(2px);
       -webkit-backdrop-filter: blur(12px);
       border-left: 1px solid rgba(45, 212, 168, 0.06);
       border-right: 1px solid rgba(45, 212, 168, 0.06);
       position: relative;
-      z-index: 3;
+      z-index: 1;
       min-height: 100vh;
       min-height: 100dvh;
       justify-content: center;
@@ -55,18 +46,21 @@
       top: 12%;
       bottom: 12%;
       width: 1px;
-      background: linear-gradient(
-        180deg,
-        transparent,
-        rgba(45, 212, 168, 0.12) 30%,
-        rgba(45, 212, 168, 0.25) 50%,
-        rgba(45, 212, 168, 0.12) 70%,
-        transparent
-      );
+      background: linear-gradient(180deg,
+          transparent,
+          rgba(45, 212, 168, 0.12) 30%,
+          rgba(45, 212, 168, 0.25) 50%,
+          rgba(45, 212, 168, 0.12) 70%,
+          transparent);
     }
 
-    .content-panel::before { left: 0; }
-    .content-panel::after { right: 0; }
+    .content-panel::before {
+      left: 0;
+    }
+
+    .content-panel::after {
+      right: 0;
+    }
 
     /* --- Brand --- */
     .brand {
@@ -115,8 +109,15 @@
     }
 
     @keyframes kawaii-float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
     }
 
     .player-fields {
@@ -204,13 +205,13 @@
       z-index: 1;
     }
   </style>
-  <script type="module" crossorigin src="/assets/main-CXFSW3rh.js"></script>
+  <script type="module" crossorigin src="/assets/main-BbnlgSfH.js"></script>
   <link rel="modulepreload" crossorigin href="/assets/i18n-CYArclXf.js">
   <link rel="modulepreload" crossorigin href="/assets/leaderboard-BcnF99tr.js">
   <link rel="stylesheet" crossorigin href="/assets/i18n-B9QKkimO.css">
 </head>
+
 <body>
-  <canvas id="bg-canvas"></canvas>
   <div class="screen home">
     <div class="content-panel">
       <div class="brand">
@@ -227,40 +228,30 @@
         <div class="hud-panel-corner br"></div>
         <div class="hud-label" data-zh="玩家" data-en="PLAYER">玩家</div>
         <div class="player-row">
-          <img class="kawaii" src="/assets/svg/kawaii.svg" alt="" draggable="false">
           <div class="player-fields">
             <div class="field">
-              <input
-                class="input"
-                type="text"
-                id="nickname"
-                data-zh-placeholder="输入昵称"
-                data-en-placeholder="NICKNAME"
-                autocomplete="off"
-              >
+              <input class="input" type="text" id="nickname" data-zh-placeholder="输入昵称" data-en-placeholder="NICKNAME"
+                autocomplete="off">
             </div>
             <div class="field">
-              <input
-                class="input"
-                type="text"
-                id="company"
-                data-zh-placeholder="公司名称"
-                data-en-placeholder="COMPANY"
-                autocomplete="off"
-              >
+              <input class="input" type="text" id="company" data-zh-placeholder="公司名称" data-en-placeholder="COMPANY"
+                autocomplete="off">
             </div>
           </div>
         </div>
       </div>
 
       <div class="home-actions">
-        <a href="/games/latte-art/" class="cyber-btn cyber-btn--primary" data-zh="开始拉花" data-en="BEGIN LATTE ART">开始拉花</a>
+        <a href="/games/latte-art/" class="cyber-btn cyber-btn--primary" data-zh="开始拉花"
+          data-en="BEGIN LATTE ART">开始拉花</a>
         <button class="cyber-btn cyber-btn--ghost" id="lb-open" data-zh="排行榜" data-en="LEADERBOARD">排行榜</button>
       </div>
     </div>
   </div>
 
-  <div class="footer" data-zh="SUPER DEVI · 为出海企业打造视觉体验" data-en="SUPER DEVI · VISUAL EXPERIENCES FOR COMPANIES GOING GLOBAL">SUPER DEVI · 为出海企业打造视觉体验</div>
+  <div class="footer" data-zh="SUPER DEVI · 为出海企业打造视觉体验"
+    data-en="SUPER DEVI · VISUAL EXPERIENCES FOR COMPANIES GOING GLOBAL">SUPER DEVI · 为出海企业打造视觉体验</div>
 
 </body>
+
 </html>

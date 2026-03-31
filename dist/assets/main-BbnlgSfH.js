@@ -1,0 +1,4 @@
+import{n as e}from"./i18n-CYArclXf.js";import{a as t,i as n,n as r,o as i,s as a,t as o}from"./leaderboard-BcnF99tr.js";var s=document.getElementById(`nickname`),c=document.getElementById(`company`);s.value=t(),c.value=n(),s.addEventListener(`input`,()=>a(s.value)),c.addEventListener(`input`,()=>i(c.value)),document.getElementById(`lb-open`).addEventListener(`click`,async()=>{let e=document.createElement(`div`);e.className=`lb-overlay`,e.innerHTML=`
+        <div id="lb-home-container"></div>
+        <button class="btn lb-close" data-zh="关闭" data-en="CLOSE">关闭</button>
+      `,document.body.appendChild(e),e.querySelector(`.lb-close`).addEventListener(`click`,()=>e.remove()),e.addEventListener(`click`,t=>{t.target===e&&e.remove()}),r(e.querySelector(`#lb-home-container`),await o(`latte-art`,10),{game:`latte-art`,lowerIsBetter:!0})}),e();

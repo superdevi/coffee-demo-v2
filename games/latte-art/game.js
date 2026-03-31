@@ -8,8 +8,10 @@ import { vibrateShort, vibrateMedium, vibrateHeavy, vibratePattern } from '/shar
 import { submitScore, fetchLeaderboard, renderLeaderboard } from '/shared/leaderboard.js'
 import { initLocale, getLocale } from '/shared/i18n.js'
 import { initFoliageBorder } from '/shared/foliage-border.js'
+import { sfxPourStart, sfxPourLoop, sfxTick, sfxHeartbeat, sfxRelease, sfxWarning } from '/shared/sfx.js'
 
 let foliage = null
+let stopPourLoop = null
 initFoliageBorder(document.getElementById('foliage-canvas')).then(f => { foliage = f })
 
 const TARGET = 8.88
@@ -43,7 +45,6 @@ const bagua = $('.bagua')
 const bgGlow = $('.bg-glow')
 const pourBtn = $('.pour-btn')
 const pourHint = $('.pour-hint')
-const revealMask = $('#reveal-mask-circle')
 const milkGlow = $('#milk-glow')
 const lotusArt = $('#lotus-art')
 const overflowFlood = $('#overflow-flood')
@@ -53,21 +54,25 @@ const endGlow = $('#end-glow')
 
 // --- SVG Reveal ---
 const REVEAL_RADIUS_MAX = 130 // enough to show full art
-const LOTUS_BASE_TRANSFORM = 'translate(130,130) scale(0.36) translate(-256,-256)'
+const LOTUS_BASE_TRANSFORM = 'translate(130,130) scale(0.20) translate(-395.4,-416.4)'
 
 
-// --- Advanced SVG Animation Setup ---
+// --- Advanced SVG Animation Setup (matches latte_art_animation.txt) ---
 const GROUPS_COUNT = 9;
 const thresholds = [0, 0.08, 0.16, 0.24, 0.35, 0.46, 0.57, 0.72, 0.88];
-let groupElements = [];
+// Per-group: filter refs (shared across paths in group)
+let groupFilters = []; // { displacement, blur }
+// Per-path: individual mask + maxDist
+let pathData = []; // { el, group, gradient, maxDist }
 
 function initAdvancedLatteArt() {
   const ns = "http://www.w3.org/2000/svg";
   const defs = document.querySelector(".cup-svg defs");
   const paths = Array.from(document.querySelectorAll("#lotus-art path"));
-  
-  if (paths.length === 0) return; // Not injected yet or wrong page
 
+  if (paths.length === 0) return;
+
+  // Compute stem point (center-bottom of bounding box union)
   let mx = 9999, mxx = -9999, my = -9999;
   paths.forEach(p => {
     let b = p.getBBox();
@@ -78,37 +83,8 @@ function initAdvancedLatteArt() {
   const sx = (mx + mxx) / 2;
   const sy = my;
 
-  // Initialize group data
+  // Create one filter per group (shared by all paths in the group)
   for (let g = 0; g < GROUPS_COUNT; g++) {
-    groupElements.push({ paths: [], gradient: null, filter: null, maxDist: 0, displacement: null, blur: null });
-  }
-
-  paths.forEach((p) => {
-    const gUrl = p.getAttribute("data-g");
-    if (gUrl === null) return;
-    const g = parseInt(gUrl, 10);
-    if (!groupElements[g]) return;
-    
-    groupElements[g].paths.push(p);
-
-    let bb = p.getBBox();
-    let cx = [bb.x, bb.x + bb.width];
-    let cy = [bb.y, bb.y + bb.height];
-    for (let i = 0; i < 2; i++) {
-      for (let j = 0; j < 2; j++) {
-        let dd = Math.hypot(cx[i] - sx, cy[j] - sy);
-        if (dd > groupElements[g].maxDist) {
-          groupElements[g].maxDist = dd;
-        }
-      }
-    }
-  });
-
-  // Create filters and masks for each group
-  for (let g = 0; g < GROUPS_COUNT; g++) {
-    const grp = groupElements[g];
-    if (grp.paths.length === 0) continue;
-
     const f = document.createElementNS(ns, "filter");
     f.id = "f" + g;
     f.setAttribute("color-interpolation-filters", "sRGB");
@@ -134,73 +110,94 @@ function initAdvancedLatteArt() {
     bl.setAttribute("in", "dp");
     bl.setAttribute("stdDeviation", "1.5");
 
-    f.appendChild(tb);
-    f.appendChild(dp);
-    f.appendChild(bl);
+    f.appendChild(tb); f.appendChild(dp); f.appendChild(bl);
     defs.appendChild(f);
 
-    grp.filter = f;
-    grp.displacement = dp;
-    grp.blur = bl;
+    groupFilters[g] = { displacement: dp, blur: bl };
+  }
 
+  // Create per-path radial mask (each path gets its own gradient + mask with its own maxDist)
+  paths.forEach(p => {
+    const gAttr = p.getAttribute("data-g");
+    if (gAttr === null) return;
+    const g = parseInt(gAttr, 10);
+    if (g < 0 || g >= GROUPS_COUNT) return;
+
+    const idx = p.id; // e.g. "p15"
+
+    // Per-path maxDist from stem point
+    const bb = p.getBBox();
+    let md = 0;
+    const corners = [[bb.x, bb.y], [bb.x + bb.width, bb.y], [bb.x, bb.y + bb.height], [bb.x + bb.width, bb.y + bb.height]];
+    corners.forEach(([cx, cy]) => {
+      const dd = Math.hypot(cx - sx, cy - sy);
+      if (dd > md) md = dd;
+    });
+
+    // Radial gradient for this path's mask
     const gr = document.createElementNS(ns, "radialGradient");
-    gr.id = "r" + g;
+    gr.id = "r" + idx;
     gr.setAttribute("gradientUnits", "userSpaceOnUse");
     gr.setAttribute("cx", sx);
     gr.setAttribute("cy", sy);
     gr.setAttribute("r", "0");
-    
+
     const s1 = document.createElementNS(ns, "stop");
     s1.setAttribute("offset", "0.82");
     s1.setAttribute("stop-color", "white");
-    
     const s2 = document.createElementNS(ns, "stop");
     s2.setAttribute("offset", "1");
     s2.setAttribute("stop-color", "black");
-
-    gr.appendChild(s1);
-    gr.appendChild(s2);
+    gr.appendChild(s1); gr.appendChild(s2);
     defs.appendChild(gr);
 
-    grp.gradient = gr;
-
+    // Mask using this gradient
     const mk = document.createElementNS(ns, "mask");
-    mk.id = "m" + g;
+    mk.id = "m" + idx;
     const mr = document.createElementNS(ns, "rect");
     mr.setAttribute("x", "-200"); mr.setAttribute("y", "-300");
     mr.setAttribute("width", "1200"); mr.setAttribute("height", "1400");
-    mr.setAttribute("fill", "url(#r" + g + ")");
+    mr.setAttribute("fill", "url(#r" + idx + ")");
     mk.appendChild(mr);
     defs.appendChild(mk);
 
-    grp.paths.forEach(p => {
-      p.setAttribute("mask", "url(#m" + g + ")");
-      p.setAttribute("filter", "url(#f" + g + ")");
-      p.style.opacity = "0";
-    });
-  }
+    // Apply per-path mask + group filter
+    p.setAttribute("mask", "url(#m" + idx + ")");
+    p.setAttribute("filter", "url(#f" + g + ")");
+    p.style.opacity = "0";
+
+    pathData.push({ el: p, group: g, gradient: gr, maxDist: md });
+  });
 }
 
+initAdvancedLatteArt()
+
 function setRevealProgress(progress, elapsed) {
-  // Advanced SVG group layers
+  // Update per-group filters (displacement + blur)
   for (let g = 0; g < GROUPS_COUNT; g++) {
-    const grp = groupElements[g];
-    if (!grp || !grp.paths.length) continue;
+    const gf = groupFilters[g];
+    if (!gf) continue;
 
     const groupProgress = Math.max(0, Math.min(1,
       (progress - thresholds[g]) / (1 - thresholds[g])
     ));
 
-    // Calculate radius to exceed maxDist
-    const targetRadius = grp.maxDist * 1.2;
-    grp.gradient.setAttribute("r", String(groupProgress * targetRadius));
-    
-    grp.displacement.setAttribute("scale", String(180 * (1 - groupProgress)));
-    grp.blur.setAttribute("stdDeviation", String(1.5 * (1 - groupProgress)));
-    
-    const ops = groupProgress > 0 ? String(Math.min(1, groupProgress * 3)) : "0";
-    grp.paths.forEach(p => p.style.opacity = ops);
+    gf.displacement.setAttribute("scale", String(180 * (1 - groupProgress)));
+    gf.blur.setAttribute("stdDeviation", String(1.5 * (1 - groupProgress)));
   }
+
+  // Update per-path masks and opacity
+  pathData.forEach(({ el, group, gradient, maxDist }) => {
+    const groupProgress = Math.max(0, Math.min(1,
+      (progress - thresholds[group]) / (1 - thresholds[group])
+    ));
+
+    // Per-path radial mask radius
+    gradient.setAttribute("r", String(groupProgress * maxDist * 1.2));
+
+    // Opacity fade-in
+    el.style.opacity = groupProgress > 0 ? String(Math.min(1, groupProgress * 3)) : "0";
+  });
 
   // milk impact glow (keep from original)
   const glowRad = Math.min(progress, 1) * 130 * 0.4;
@@ -214,10 +211,7 @@ function setRevealProgress(progress, elapsed) {
     overflowFlood.setAttribute('r', String(40 + overAmount * 100));
     overflowFlood.setAttribute('opacity', String(Math.min(overAmount * 0.8, 0.7)));
     
-    // Distort the lotus via SVG transform attribute
-    const scale = 0.36 * (1 + overAmount * 0.25);
-    const skewX = Math.sin(elapsed * 3) * overAmount * 8;
-    lotusArt.setAttribute('transform', `translate(130,130) scale(${scale}) skewX(${skewX}) translate(-256,-256)`);
+    // Fade the art when over-pouring (no scale change)
     lotusArt.setAttribute('opacity', String(1 - overAmount * 0.4));
   } else {
     cremaWhiten.setAttribute('opacity', '0');
@@ -263,12 +257,19 @@ function updateTension(elapsed) {
     heartbeatRing.classList.add('active')
   }
 
-  // Haptic rhythm at 8s+
+  // Tick sound — every ~0.5s, pitch rises with time
+  const tickInterval = elapsed >= 7.0 ? 0.25 : 0.5
+  if (elapsed > 0.5 && (elapsed % tickInterval) < 0.02) {
+    sfxTick(elapsed, TARGET)
+  }
+
+  // Haptic + heartbeat sound at 8s+
   if (elapsed >= 8.0 && elapsed < TARGET) {
     const beatInterval = elapsed >= 8.5 ? 200 : 400
     const timeSinceBeat = ((elapsed - 8.0) * 1000) % beatInterval
     if (timeSinceBeat < 20) {
       vibrateShort()
+      sfxHeartbeat(elapsed >= 8.5)
     }
   }
 
@@ -276,6 +277,10 @@ function updateTension(elapsed) {
   if (elapsed > TARGET) {
     cupContainer.classList.add('shake')
     overflowRing.classList.add('active')
+    // Warning buzz every 0.3s
+    if ((elapsed % 0.3) < 0.02) {
+      sfxWarning()
+    }
   } else {
     cupContainer.classList.remove('shake')
     overflowRing.classList.remove('active')
@@ -330,6 +335,8 @@ function startPour() {
   pourBtn.classList.add('pressing')
   pourHint.textContent = getLocale() === 'zh' ? '松开' : 'Release'
   vibrateMedium()
+  sfxPourStart()
+  stopPourLoop = sfxPourLoop()
   if (foliage) foliage.setRustling(true)
 
   state.animFrame = requestAnimationFrame(gameLoop)
@@ -345,6 +352,8 @@ function endPour() {
   pourBtn.classList.remove('pressing')
   releaseDrag()
   if (foliage) foliage.setRustling(false)
+  if (stopPourLoop) { stopPourLoop(); stopPourLoop = null }
+  sfxRelease(Math.abs(state.elapsed - TARGET))
   bagua.classList.remove('pouring')
   steamContainer.classList.remove('active')
   cupContainer.classList.remove('shake')
