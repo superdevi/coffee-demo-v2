@@ -9,7 +9,8 @@ import { submitScore, fetchLeaderboard, renderLeaderboard } from '/shared/leader
 import { initLocale, getLocale } from '/shared/i18n.js'
 import { initFoliageBorder } from '/shared/foliage-border.js'
 
-initFoliageBorder(document.getElementById('foliage-canvas'))
+let foliage = null
+initFoliageBorder(document.getElementById('foliage-canvas')).then(f => { foliage = f })
 
 const TARGET = 8.88
 const MAX_TIME = 12
@@ -48,6 +49,7 @@ const lotusArt = $('#lotus-art')
 const overflowFlood = $('#overflow-flood')
 const cremaWhiten = $('#crema-whiten')
 const gameScreen = $('#game-screen')
+const endGlow = $('#end-glow')
 
 // --- SVG Reveal ---
 const REVEAL_RADIUS_MAX = 130 // enough to show full art
@@ -183,7 +185,7 @@ function setRevealProgress(progress, elapsed) {
   // Advanced SVG group layers
   for (let g = 0; g < GROUPS_COUNT; g++) {
     const grp = groupElements[g];
-    if (!grp.paths.length) continue;
+    if (!grp || !grp.paths.length) continue;
 
     const groupProgress = Math.max(0, Math.min(1,
       (progress - thresholds[g]) / (1 - thresholds[g])
@@ -328,6 +330,7 @@ function startPour() {
   pourBtn.classList.add('pressing')
   pourHint.textContent = getLocale() === 'zh' ? '松开' : 'Release'
   vibrateMedium()
+  if (foliage) foliage.setRustling(true)
 
   state.animFrame = requestAnimationFrame(gameLoop)
 }
@@ -341,6 +344,7 @@ function endPour() {
   pourStream.classList.remove('active')
   pourBtn.classList.remove('pressing')
   releaseDrag()
+  if (foliage) foliage.setRustling(false)
   bagua.classList.remove('pouring')
   steamContainer.classList.remove('active')
   cupContainer.classList.remove('shake')
@@ -350,17 +354,16 @@ function endPour() {
 
   vibrateHeavy()
 
-  // Screen flash
-  const delta = Math.abs(state.elapsed - TARGET)
-  const flash = document.createElement('div')
-  flash.className = `screen-flash ${delta < 0.05 ? 'white' : delta < 0.3 ? 'gold' : ''}`
-  if (flash.classList.contains('white') || flash.classList.contains('gold')) {
-    document.body.appendChild(flash)
-    flash.addEventListener('animationend', () => flash.remove())
-  }
+  // Full-screen glow transition
+  endGlow.classList.add('active')
 
-  // Brief pause then show result
-  setTimeout(() => showResult(state.elapsed), 700)
+  // Brief pause, then show result and fade glow out
+  setTimeout(() => {
+    showResult(state.elapsed)
+    setTimeout(() => {
+      endGlow.classList.remove('active')
+    }, 1500)
+  }, 800)
 }
 
 // --- Result Screen ---
@@ -415,6 +418,7 @@ function resetGame() {
   updateTimer(0)
   pourHint.textContent = getLocale() === 'zh' ? '按住倒奶' : 'Hold to Pour'
   timerEl.classList.remove('warm', 'hot', 'target', 'danger')
+  endGlow.classList.remove('active')
   gameScreen.classList.remove('result')
 }
 

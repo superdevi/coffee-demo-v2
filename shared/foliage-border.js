@@ -1,6 +1,7 @@
 /**
- * Foliage Border — dense tea leaf branches framing the screen edges.
- * Leaves grow from stems that emerge from corners and edges inward.
+ * Foliage Border — lush leaves growing out from the 4 corners,
+ * tips pointing inward toward the cup. Like plants growing from
+ * behind each corner into the frame.
  */
 
 const LEAF_COLS = 3
@@ -23,7 +24,6 @@ function loadLeafSprites() {
           const ctx = c.getContext('2d')
           ctx.drawImage(img, col * cw, row * ch, cw, ch, 0, 0, cw, ch)
 
-          // Remove white background
           const imageData = ctx.getImageData(0, 0, cw, ch)
           const d = imageData.data
           for (let i = 0; i < d.length; i += 4) {
@@ -45,120 +45,130 @@ function loadLeafSprites() {
   })
 }
 
-/**
- * A branch is a curved stem line with leaves growing off it.
- * It originates from an edge/corner and curves inward.
- */
-function generateBranches(w, h) {
-  const branches = []
+function generateLeaves(w, h) {
+  const leaves = []
+  const cx = w / 2
+  const cy = h / 2
   const short = Math.min(w, h)
 
-  // Push origins outside the screen so stems are hidden behind the edge
-  const out = short * 0.08 // how far outside the screen origins sit
-
-  const origins = [
-    // Corners — multiple branches for density
-    { x: -out, y: -out, angle: Math.PI * 0.28 },
-    { x: -out, y: -out, angle: Math.PI * 0.38 },
-    { x: -out, y: -out, angle: Math.PI * 0.2 },
-    { x: w + out, y: -out, angle: Math.PI * 0.62 },
-    { x: w + out, y: -out, angle: Math.PI * 0.72 },
-    { x: w + out, y: -out, angle: Math.PI * 0.8 },
-    { x: -out, y: h + out, angle: -Math.PI * 0.28 },
-    { x: -out, y: h + out, angle: -Math.PI * 0.38 },
-    { x: -out, y: h + out, angle: -Math.PI * 0.2 },
-    { x: w + out, y: h + out, angle: -Math.PI * 0.62 },
-    { x: w + out, y: h + out, angle: -Math.PI * 0.72 },
-    { x: w + out, y: h + out, angle: -Math.PI * 0.8 },
-    // Left edge
-    { x: -out, y: h * 0.2, angle: Math.PI * 0.08 },
-    { x: -out, y: h * 0.4, angle: Math.PI * 0.03 },
-    { x: -out, y: h * 0.6, angle: -Math.PI * 0.03 },
-    { x: -out, y: h * 0.8, angle: -Math.PI * 0.08 },
-    // Right edge
-    { x: w + out, y: h * 0.2, angle: Math.PI * 0.92 },
-    { x: w + out, y: h * 0.4, angle: Math.PI * 0.97 },
-    { x: w + out, y: h * 0.6, angle: -Math.PI * 0.97 },
-    { x: w + out, y: h * 0.8, angle: -Math.PI * 0.92 },
-    // Top edge
-    { x: w * 0.2, y: -out, angle: Math.PI * 0.46 },
-    { x: w * 0.4, y: -out, angle: Math.PI * 0.48 },
-    { x: w * 0.6, y: -out, angle: Math.PI * 0.52 },
-    { x: w * 0.8, y: -out, angle: Math.PI * 0.54 },
-    // Bottom edge
-    { x: w * 0.2, y: h + out, angle: -Math.PI * 0.46 },
-    { x: w * 0.4, y: h + out, angle: -Math.PI * 0.48 },
-    { x: w * 0.6, y: h + out, angle: -Math.PI * 0.52 },
-    { x: w * 0.8, y: h + out, angle: -Math.PI * 0.54 },
+  // 4 corners — leaves radiate outward from each corner point
+  const corners = [
+    { x: 0, y: 0 },       // top-left
+    { x: w, y: 0 },       // top-right
+    { x: 0, y: h },       // bottom-left
+    { x: w, y: h },       // bottom-right
   ]
 
-  for (const origin of origins) {
-    const stemLength = short * (0.18 + Math.random() * 0.14)
-    const curve = (Math.random() - 0.5) * 0.4
-    const leafCount = 6 + Math.floor(Math.random() * 6)
-    const leafSize = short * (0.12 + Math.random() * 0.09)
+  const leavesPerCorner = 30
 
-    // Generate stem points along a curved path
-    const stemPoints = []
-    for (let t = 0; t <= 1; t += 0.05) {
-      const a = origin.angle + curve * t * t
-      stemPoints.push({
-        x: origin.x + Math.cos(a) * stemLength * t,
-        y: origin.y + Math.sin(a) * stemLength * t,
-      })
+  for (const corner of corners) {
+    // Angle from corner toward center
+    const baseAngle = Math.atan2(cy - corner.y, cx - corner.x)
+
+    for (let layer = 0; layer < 3; layer++) {
+      const count = layer === 0 ? 12 : layer === 1 ? 10 : 8
+      const brightness = layer === 0 ? 0.4 : layer === 1 ? 0.6 : 0.8
+
+      for (let i = 0; i < count; i++) {
+        // Spread leaves in a fan from the corner
+        // Angle varies ±60° around the base angle toward center
+        const angleSpread = (Math.random() - 0.5) * Math.PI * 0.7
+        const angle = baseAngle + angleSpread
+
+        // Distance from corner — start behind the corner so stems are cropped off
+        const dist = short * (-0.08 + Math.random() * 0.28)
+
+        const x = corner.x + Math.cos(angle) * dist
+        const y = corner.y + Math.sin(angle) * dist
+
+        // Size — big, overlapping
+        const size = short * (0.2 + Math.random() * 0.18)
+
+        // Tip points toward center from this leaf's position
+        const tipAngle = Math.atan2(cy - y, cx - x)
+
+        leaves.push({
+          x,
+          y,
+          size,
+          rotation: tipAngle + (Math.random() - 0.5) * 0.4,
+          spriteIdx: Math.floor(Math.random() * 6),
+          brightness: brightness + (Math.random() - 0.5) * 0.1,
+          swaySpeed: 0.25 + Math.random() * 0.35,
+          swayAmp: 0.02 + Math.random() * 0.03,
+          swayOffset: Math.random() * Math.PI * 2,
+        })
+      }
     }
-
-    // Place leaves along the stem
-    const leaves = []
-    for (let i = 0; i < leafCount; i++) {
-      const t = 0.15 + (i / leafCount) * 0.8 + Math.random() * 0.05
-      const idx = Math.min(Math.floor(t * stemPoints.length), stemPoints.length - 1)
-      const pt = stemPoints[idx]
-
-      // Alternate sides
-      const side = i % 2 === 0 ? 1 : -1
-      const branchAngle = origin.angle + curve * t * t
-      const leafAngle = branchAngle + side * (0.4 + Math.random() * 0.5)
-
-      // Size tapers toward tip
-      const taper = 1 - t * 0.4
-      const size = leafSize * taper * (0.8 + Math.random() * 0.4)
-
-      // Point leaf tip toward screen center
-      const lx = pt.x + Math.cos(leafAngle) * size * 0.3
-      const ly = pt.y + Math.sin(leafAngle) * size * 0.3
-      const angleToCenter = Math.atan2(h / 2 - ly, w / 2 - lx)
-
-      leaves.push({
-        x: lx,
-        y: ly,
-        size,
-        rotation: angleToCenter + Math.PI / 2 + (Math.random() - 0.5) * 0.4,
-        spriteIdx: Math.floor(Math.random() * 6),
-        swayOffset: Math.random() * Math.PI * 2,
-        swaySpeed: 0.3 + Math.random() * 0.4,
-        swayAmp: 0.03 + Math.random() * 0.04,
-        depth: t, // for brightness
-      })
-    }
-
-    branches.push({
-      origin,
-      stemPoints,
-      leaves,
-      stemLength,
-    })
   }
 
-  return branches
+  // Edge leaves — fill the borders between corners
+  // More points along longer sides (portrait mobile = tall sides)
+  const sideCount = Math.max(8, Math.round(h / (short * 0.12)))
+  const topBottomCount = Math.max(4, Math.round(w / (short * 0.14)))
+
+  const edgeDefs = [
+    // left edge
+    ...Array.from({ length: sideCount }, (_, i) => ({
+      x: 0, y: h * ((i + 0.5) / sideCount), fromAngle: 0
+    })),
+    // right edge
+    ...Array.from({ length: sideCount }, (_, i) => ({
+      x: w, y: h * ((i + 0.5) / sideCount), fromAngle: Math.PI
+    })),
+    // top edge
+    ...Array.from({ length: topBottomCount }, (_, i) => ({
+      x: w * ((i + 0.5) / topBottomCount), y: 0, fromAngle: Math.PI / 2
+    })),
+    // bottom edge
+    ...Array.from({ length: topBottomCount }, (_, i) => ({
+      x: w * ((i + 0.5) / topBottomCount), y: h, fromAngle: -Math.PI / 2
+    })),
+  ]
+
+  for (const edge of edgeDefs) {
+    for (let layer = 0; layer < 2; layer++) {
+      const count = layer === 0 ? 3 : 2
+      const brightness = layer === 0 ? 0.45 : 0.7
+
+      for (let i = 0; i < count; i++) {
+        const angleJitter = (Math.random() - 0.5) * 0.6
+        const angle = edge.fromAngle + angleJitter
+        const dist = short * (-0.1 + Math.random() * 0.12)
+
+        const x = edge.x + Math.cos(angle) * dist
+        const y = edge.y + Math.sin(angle) * dist
+
+        const size = short * (0.18 + Math.random() * 0.14)
+        const tipAngle = Math.atan2(cy - y, cx - x)
+
+        leaves.push({
+          x,
+          y,
+          size,
+          rotation: tipAngle + (Math.random() - 0.5) * 0.4,
+          spriteIdx: Math.floor(Math.random() * 6),
+          brightness: brightness + (Math.random() - 0.5) * 0.1,
+          swaySpeed: 0.25 + Math.random() * 0.35,
+          swayAmp: 0.02 + Math.random() * 0.03,
+          swayOffset: Math.random() * Math.PI * 2,
+        })
+      }
+    }
+  }
+
+  leaves.sort((a, b) => a.brightness - b.brightness)
+  return leaves
 }
 
 export async function initFoliageBorder(canvasEl) {
   const ctx = canvasEl.getContext('2d')
   const sprites = await loadLeafSprites()
-  if (sprites.length === 0) return
+  if (sprites.length === 0) return { setRustling() {} }
 
-  let w, h, dpr, branches
+  let w, h, dpr, leaves
+  let rustling = false
+  let rustleIntensity = 0 // smooth transition 0→1
 
   function resize() {
     dpr = Math.min(window.devicePixelRatio, 2)
@@ -168,7 +178,7 @@ export async function initFoliageBorder(canvasEl) {
     canvasEl.height = h * dpr
     canvasEl.style.width = w + 'px'
     canvasEl.style.height = h + 'px'
-    branches = generateBranches(w * dpr, h * dpr)
+    leaves = generateLeaves(w * dpr, h * dpr)
   }
 
   window.addEventListener('resize', resize)
@@ -180,38 +190,38 @@ export async function initFoliageBorder(canvasEl) {
     requestAnimationFrame(draw)
     const t = (performance.now() - startTime) / 1000
 
+    // Smooth ramp rustle intensity
+    const target = rustling ? 1 : 0
+    rustleIntensity += (target - rustleIntensity) * 0.06
+
     ctx.clearRect(0, 0, w * dpr, h * dpr)
 
-    for (const branch of branches) {
-      // Draw stem line
-      ctx.beginPath()
-      ctx.moveTo(branch.stemPoints[0].x, branch.stemPoints[0].y)
-      for (let i = 1; i < branch.stemPoints.length; i++) {
-        ctx.lineTo(branch.stemPoints[i].x, branch.stemPoints[i].y)
-      }
-      ctx.strokeStyle = 'rgb(45, 70, 38)'
-      ctx.lineWidth = 2 * dpr
-      ctx.stroke()
+    for (const leaf of leaves) {
+      // Base gentle sway + rustle layer (faster, more chaotic)
+      const baseSway = Math.sin(t * leaf.swaySpeed + leaf.swayOffset) * leaf.swayAmp
+      const rustle = rustleIntensity * (
+        Math.sin(t * 3.5 + leaf.swayOffset * 2.7) * 0.08 +
+        Math.sin(t * 5.2 + leaf.swayOffset * 1.3) * 0.05 +
+        Math.cos(t * 7.1 + leaf.swayOffset * 3.1) * 0.03
+      )
+      const sway = baseSway + rustle
 
-      // Draw leaves
-      for (const leaf of branch.leaves) {
-        const sway = Math.sin(t * leaf.swaySpeed + leaf.swayOffset) * leaf.swayAmp
-        const sprite = sprites[leaf.spriteIdx % sprites.length]
+      const sprite = sprites[leaf.spriteIdx % sprites.length]
 
-        ctx.save()
-        ctx.globalAlpha = 1
+      ctx.save()
+      ctx.globalAlpha = 1
+      ctx.filter = `brightness(${leaf.brightness})`
 
-        // Deeper leaves slightly darker
-        const brightness = 0.55 + leaf.depth * 0.35
-        ctx.filter = `brightness(${brightness})`
-
-        ctx.translate(leaf.x, leaf.y)
-        ctx.rotate(leaf.rotation + sway)
-        ctx.drawImage(sprite, -leaf.size / 2, -leaf.size, leaf.size, leaf.size)
-        ctx.restore()
-      }
+      ctx.translate(leaf.x, leaf.y)
+      ctx.rotate(leaf.rotation + sway)
+      ctx.drawImage(sprite, -leaf.size / 2, -leaf.size, leaf.size, leaf.size)
+      ctx.restore()
     }
   }
 
   draw()
+
+  return {
+    setRustling(active) { rustling = active }
+  }
 }
