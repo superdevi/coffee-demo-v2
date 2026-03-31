@@ -241,16 +241,12 @@ function showResult(elapsed) {
 
 function renderResultText() {
   if (!state.lastResult) return
-  const { elapsed, delta, grade, sign } = state.lastResult
+  const { elapsed, grade } = state.lastResult
   const locale = getLocale()
-  const messages = locale === 'zh' ? grade.messagesZh : grade.messagesEn
-  const message = messages[Math.floor(Math.random() * messages.length)]
 
   $('#result-time').textContent = elapsed.toFixed(2)
-  $('#result-delta').textContent = `${sign}${delta.toFixed(2)}s`
   $('#result-grade').textContent = locale === 'zh' ? grade.cn : grade.en
   $('#result-grade').className = `result-grade ${grade.cls}`
-  $('#result-message').textContent = message
 }
 
 async function loadLeaderboard(currentScore, currentNickname) {
