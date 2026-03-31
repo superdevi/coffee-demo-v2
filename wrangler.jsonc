@@ -1,0 +1,11 @@
+{
+  "name": "coffee-demo-v2",
+  "pages_build_output_dir": "dist",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "coffee-leaderboard",
+      "database_id": "be4563ef-64d0-470b-883b-ab93b9af7eaa"
+    }
+  ]
+}

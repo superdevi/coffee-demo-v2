@@ -39,18 +39,20 @@
       margin-top: var(--space-sm);
     }
 
-    .nickname-bar {
+    .player-info {
       display: flex;
+      flex-direction: column;
       gap: var(--space-sm);
       width: 100%;
       max-width: 320px;
     }
 
-    .nickname-bar .input {
-      flex: 1;
+    .player-info .input {
+      width: 100%;
       text-align: center;
       font-size: 0.9rem;
       padding: var(--space-sm) var(--space-md);
+      box-sizing: border-box;
     }
 
     .games-grid {
@@ -159,13 +161,21 @@
 
     <div class="taopunk-divider"></div>
 
-    <div class="nickname-bar">
+    <div class="player-info">
       <input
         class="input"
         type="text"
         id="nickname"
-        placeholder="输入昵称 · Enter nickname"
-        maxlength="8"
+        data-zh-placeholder="输入昵称"
+        data-en-placeholder="Enter nickname"
+        autocomplete="off"
+      >
+      <input
+        class="input"
+        type="text"
+        id="company"
+        data-zh-placeholder="公司名称"
+        data-en-placeholder="Company"
         autocomplete="off"
       >
     </div>
@@ -174,8 +184,8 @@
       <a href="/games/latte-art/" class="card game-card">
         <div class="game-icon">☕</div>
         <div class="game-info">
-          <div class="game-title">拉花 · Latte Art</div>
-          <div class="game-subtitle">Hold to pour — release at 8.88s</div>
+          <div class="game-title" data-zh="拉花" data-en="Latte Art">拉花</div>
+          <div class="game-subtitle" data-zh="按住倒奶 — 停在 8.88 秒" data-en="Hold to pour — release at 8.88s">按住倒奶 — 停在 8.88 秒</div>
         </div>
         <div class="game-arrow">→</div>
       </a>
@@ -183,8 +193,8 @@
       <a href="/games/tap-tap/" class="card game-card">
         <div class="game-icon">🎯</div>
         <div class="game-info">
-          <div class="game-title">弹弹杯 · Tap-Tap</div>
-          <div class="game-subtitle">Tap to score — keep the streak</div>
+          <div class="game-title" data-zh="弹弹杯" data-en="Tap-Tap">弹弹杯</div>
+          <div class="game-subtitle" data-zh="点击得分 — 保持连击" data-en="Tap to score — keep the streak">点击得分 — 保持连击</div>
         </div>
         <div class="game-arrow">→</div>
       </a>
@@ -192,24 +202,30 @@
       <a href="/games/cup-stack/" class="card game-card">
         <div class="game-icon">🏗️</div>
         <div class="game-info">
-          <div class="game-title">叠杯 · Cup Stack</div>
-          <div class="game-subtitle">Stack cups — don't miss</div>
+          <div class="game-title" data-zh="叠杯" data-en="Cup Stack">叠杯</div>
+          <div class="game-subtitle" data-zh="叠杯子 — 别掉了" data-en="Stack cups — don't miss">叠杯子 — 别掉了</div>
         </div>
         <div class="game-arrow">→</div>
       </a>
     </div>
 
-    <div class="footer">
-      SUPER DEVI · Visual experiences for companies going global
-    </div>
+    <div class="footer" data-zh="SUPER DEVI · 为出海企业打造视觉体验" data-en="SUPER DEVI · Visual experiences for companies going global">SUPER DEVI · 为出海企业打造视觉体验</div>
   </div>
 
   <script type="module">
-    import { getNickname, setNickname } from '/shared/utils.js'
+    import { getNickname, setNickname, getCompany, setCompany } from '/shared/utils.js'
+    import { initLocale } from '/shared/i18n.js'
 
-    const input = document.getElementById('nickname')
-    input.value = getNickname()
-    input.addEventListener('input', () => setNickname(input.value))
+    const nicknameInput = document.getElementById('nickname')
+    const companyInput = document.getElementById('company')
+
+    nicknameInput.value = getNickname()
+    companyInput.value = getCompany()
+
+    nicknameInput.addEventListener('input', () => setNickname(nicknameInput.value))
+    companyInput.addEventListener('input', () => setCompany(companyInput.value))
+
+    initLocale()
   </script>
 </body>
 </html>

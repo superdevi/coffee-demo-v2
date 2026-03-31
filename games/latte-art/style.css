@@ -47,15 +47,15 @@
   height: 100%;
 }
 
-/* --- Pour Stream --- */
+/* --- Pour Stream (from bottom) --- */
 .pour-stream {
   position: absolute;
-  top: -60px;
+  bottom: -60px;
   left: 50%;
   transform: translateX(-50%);
   width: 6px;
   height: 80px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(212,165,116,0.7));
+  background: linear-gradient(0deg, rgba(255,255,255,0.9), rgba(212,165,116,0.7));
   border-radius: 3px;
   opacity: 0;
   transition: opacity 0.15s;

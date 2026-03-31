@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0a0a0f">
   <title>拉花 · Latte Art — 8.88</title>
-  <script type="module" crossorigin src="/assets/latteArt-DDdhcX7J.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/utils-swhUUEwV.js">
-  <link rel="stylesheet" crossorigin href="/assets/latteArt-mUBp954n.css">
-  <link rel="stylesheet" crossorigin href="/assets/theme-CKHkBABd.css">
+  <script type="module" crossorigin src="/assets/latteArt-CEr5Cw4f.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/i18n-DGmuMSFG.js">
+  <link rel="modulepreload" crossorigin href="/assets/utils-CBdnpe-u.js">
+  <link rel="stylesheet" crossorigin href="/assets/i18n-BG_Cl_Wu.css">
+  <link rel="stylesheet" crossorigin href="/assets/latteArt-BJXx1V65.css">
 </head>
 <body>
   <a href="/" class="back-btn">←</a>
@@ -81,38 +82,36 @@
         <!-- Milk impact glow (visible while pouring) -->
         <circle id="milk-glow" cx="130" cy="138" r="0" fill="rgba(255,255,255,0.15)" style="opacity:0"/>
 
-        <!-- ===== ROSETTA LATTE ART ===== -->
+        <!-- ===== LOTUS LATTE ART ===== -->
         <g mask="url(#reveal-mask)">
-          <!-- Central stem -->
-          <line x1="130" y1="180" x2="130" y2="88" stroke="#f0e6d6" stroke-width="2" stroke-linecap="round"/>
+          <!-- Center dot -->
+          <circle cx="130" cy="130" r="6" fill="#f0e6d6" opacity="0.9"/>
 
-          <!-- Leaf pair 1 (bottom, largest) -->
-          <path d="M130,175 Q105,168 98,160 Q105,165 130,170" fill="#f0e6d6" opacity="0.9"/>
-          <path d="M130,175 Q155,168 162,160 Q155,165 130,170" fill="#f0e6d6" opacity="0.9"/>
+          <!-- Inner petals (5, small) -->
+          <path d="M130,124 Q122,108 130,92 Q138,108 130,124Z" fill="#f0e6d6" opacity="0.9"/>
+          <path d="M136,126 Q152,116 162,100 Q148,118 136,126Z" fill="#f0e6d6" opacity="0.85"/>
+          <path d="M134,134 Q152,138 168,130 Q150,140 134,134Z" fill="#ede0d0" opacity="0.85"/>
+          <path d="M126,134 Q108,138 92,130 Q110,140 126,134Z" fill="#ede0d0" opacity="0.85"/>
+          <path d="M124,126 Q108,116 98,100 Q112,118 124,126Z" fill="#f0e6d6" opacity="0.85"/>
 
-          <!-- Leaf pair 2 -->
-          <path d="M130,162 Q108,155 100,146 Q110,152 130,158" fill="#ede0d0" opacity="0.85"/>
-          <path d="M130,162 Q152,155 160,146 Q150,152 130,158" fill="#ede0d0" opacity="0.85"/>
+          <!-- Outer petals (5, large, offset rotation) -->
+          <path d="M130,120 Q118,88 130,58 Q142,88 130,120Z" fill="#e8d8c5" opacity="0.7"/>
+          <path d="M138,124 Q168,104 192,82 Q162,112 138,124Z" fill="#e3d0bb" opacity="0.65"/>
+          <path d="M136,138 Q166,148 194,148 Q164,154 136,138Z" fill="#ddc8b0" opacity="0.6"/>
+          <path d="M124,138 Q94,148 66,148 Q96,154 124,138Z" fill="#ddc8b0" opacity="0.6"/>
+          <path d="M122,124 Q92,104 68,82 Q98,112 122,124Z" fill="#e3d0bb" opacity="0.65"/>
 
-          <!-- Leaf pair 3 -->
-          <path d="M130,149 Q112,143 105,135 Q114,140 130,146" fill="#e8d8c5" opacity="0.8"/>
-          <path d="M130,149 Q148,143 155,135 Q146,140 130,146" fill="#e8d8c5" opacity="0.8"/>
+          <!-- Bottom petals (3, filling lower half) -->
+          <path d="M130,140 Q118,168 130,198 Q142,168 130,140Z" fill="#e8d8c5" opacity="0.65"/>
+          <path d="M124,138 Q96,162 78,188 Q102,160 124,138Z" fill="#ddc8b0" opacity="0.55"/>
+          <path d="M136,138 Q164,162 182,188 Q158,160 136,138Z" fill="#ddc8b0" opacity="0.55"/>
 
-          <!-- Leaf pair 4 -->
-          <path d="M130,137 Q115,132 110,125 Q117,130 130,134" fill="#e3d0bb" opacity="0.75"/>
-          <path d="M130,137 Q145,132 150,125 Q143,130 130,134" fill="#e3d0bb" opacity="0.75"/>
-
-          <!-- Leaf pair 5 -->
-          <path d="M130,126 Q118,122 114,116 Q120,120 130,123" fill="#ddc8b0" opacity="0.7"/>
-          <path d="M130,126 Q142,122 146,116 Q140,120 130,123" fill="#ddc8b0" opacity="0.7"/>
-
-          <!-- Leaf pair 6 (top, smallest) -->
-          <path d="M130,116 Q121,113 118,108 Q123,111 130,114" fill="#d8c0a5" opacity="0.65"/>
-          <path d="M130,116 Q139,113 142,108 Q137,111 130,114" fill="#d8c0a5" opacity="0.65"/>
-
-          <!-- Heart at apex -->
-          <path d="M130,92 Q124,86 122,90 Q122,94 130,100 Q138,94 138,90 Q136,86 130,92Z"
-                fill="#f0e6d6" opacity="0.9"/>
+          <!-- Inner detail lines -->
+          <line x1="130" y1="124" x2="130" y2="96" stroke="#d4a574" stroke-width="1" opacity="0.3"/>
+          <line x1="136" y1="126" x2="156" y2="108" stroke="#d4a574" stroke-width="1" opacity="0.3"/>
+          <line x1="134" y1="134" x2="158" y2="134" stroke="#d4a574" stroke-width="1" opacity="0.3"/>
+          <line x1="126" y1="134" x2="102" y2="134" stroke="#d4a574" stroke-width="1" opacity="0.3"/>
+          <line x1="124" y1="126" x2="104" y2="108" stroke="#d4a574" stroke-width="1" opacity="0.3"/>
         </g>
 
         <!-- Cup rim (on top of everything) -->
@@ -127,8 +126,8 @@
 
     <!-- Pour Button -->
     <div class="pour-btn-area">
-      <button class="pour-btn">倒奶<br>POUR</button>
-      <div class="pour-hint">按住倒奶 · Hold to Pour</div>
+      <button class="pour-btn" data-zh="倒奶" data-en="POUR">倒奶</button>
+      <div class="pour-hint" data-zh="按住倒奶" data-en="Hold to Pour">按住倒奶</div>
     </div>
   </div>
 
@@ -155,14 +154,16 @@
       </defs>
       <circle cx="55" cy="55" r="50" fill="url(#result-crema)"/>
       <g mask="url(#result-reveal-mask)">
-        <line x1="55" y1="78" x2="55" y2="34" stroke="#f0e6d6" stroke-width="1.2" stroke-linecap="round"/>
-        <path d="M55,75 Q44,71 40,67 Q45,70 55,73" fill="#f0e6d6" opacity="0.9"/>
-        <path d="M55,75 Q66,71 70,67 Q65,70 55,73" fill="#f0e6d6" opacity="0.9"/>
-        <path d="M55,66 Q46,63 43,58 Q47,61 55,64" fill="#ede0d0" opacity="0.85"/>
-        <path d="M55,66 Q64,63 67,58 Q63,61 55,64" fill="#ede0d0" opacity="0.85"/>
-        <path d="M55,57 Q48,55 46,50 Q49,53 55,55" fill="#e8d8c5" opacity="0.8"/>
-        <path d="M55,57 Q62,55 64,50 Q61,53 55,55" fill="#e8d8c5" opacity="0.8"/>
-        <path d="M55,40 Q52,37 51,39 Q51,41 55,44 Q59,41 59,39 Q58,37 55,40Z" fill="#f0e6d6" opacity="0.9"/>
+        <line x1="55" y1="88" x2="55" y2="22" stroke="#f0e6d6" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M55,85 Q38,79 30,72 Q39,77 55,82" fill="#f0e6d6" opacity="0.9"/>
+        <path d="M55,85 Q72,79 80,72 Q71,77 55,82" fill="#f0e6d6" opacity="0.9"/>
+        <path d="M55,74 Q40,69 33,62 Q41,67 55,71" fill="#ede0d0" opacity="0.88"/>
+        <path d="M55,74 Q70,69 77,62 Q69,67 55,71" fill="#ede0d0" opacity="0.88"/>
+        <path d="M55,63 Q43,59 38,53 Q44,57 55,61" fill="#e8d8c5" opacity="0.85"/>
+        <path d="M55,63 Q67,59 72,53 Q66,57 55,61" fill="#e8d8c5" opacity="0.85"/>
+        <path d="M55,52 Q46,49 43,44 Q47,48 55,50" fill="#e3d0bb" opacity="0.8"/>
+        <path d="M55,52 Q64,49 67,44 Q63,48 55,50" fill="#e3d0bb" opacity="0.8"/>
+        <path d="M55,30 Q50,24 48,28 Q48,32 55,37 Q62,32 62,28 Q60,24 55,30Z" fill="#f0e6d6" opacity="0.9"/>
       </g>
       <circle cx="55" cy="55" r="49" fill="none" stroke="#a89070" stroke-width="2.5" opacity="0.25"/>
     </svg>
@@ -179,8 +180,8 @@
 
     <!-- Actions -->
     <div class="result-actions">
-      <button id="btn-again" class="btn btn-primary">再来 · Again</button>
-      <a href="/" class="btn">换游戏 · Switch</a>
+      <button id="btn-again" class="btn btn-primary" data-zh="再来" data-en="Again">再来</button>
+      <a href="/" class="btn" data-zh="换游戏" data-en="Switch">换游戏</a>
     </div>
   </div>
 

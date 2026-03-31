@@ -27,10 +27,15 @@
   <a href="/" style="position:fixed;top:16px;left:16px;color:var(--text-secondary);text-decoration:none;font-size:1.5rem;z-index:100;opacity:0.6">←</a>
   <div class="screen coming-soon">
     <div class="coming-icon">🏗️</div>
-    <div class="coming-title">叠杯 · Cup Stack</div>
-    <div class="coming-sub">Coming soon — 即将上线</div>
+    <div class="coming-title" data-zh="叠杯" data-en="Cup Stack">叠杯</div>
+    <div class="coming-sub" data-zh="即将上线" data-en="Coming soon">即将上线</div>
     <div class="taopunk-divider"></div>
-    <a href="/" class="btn btn-primary">← 返回 · Back</a>
+    <a href="/" class="btn btn-primary" data-zh="← 返回" data-en="← Back">← 返回</a>
   </div>
+
+  <script type="module">
+    import { initLocale } from '/shared/i18n.js'
+    initLocale()
+  </script>
 </body>
 </html>

@@ -278,6 +278,38 @@ body::before {
   margin: var(--space-lg) auto;
 }
 
+/* --- Locale Toggle --- */
+.locale-toggle {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 200;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.locale-toggle:active {
+  transform: scale(0.9);
+  border-color: var(--jade);
+  color: var(--text-primary);
+}
+
 /* --- Prevent zoom/scroll on mobile --- */
 html, body {
   overscroll-behavior: none;

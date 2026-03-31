@@ -1,1 +1,0 @@
-import{n as e,t}from"./utils-swhUUEwV.js";/* empty css              */var n=document.getElementById(`nickname`);n.value=t(),n.addEventListener(`input`,()=>e(n.value));

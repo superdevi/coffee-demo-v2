@@ -6,7 +6,15 @@ export function getNickname() {
 }
 
 export function setNickname(name) {
-  localStorage.setItem('coffee_nickname', name.trim().slice(0, 8))
+  localStorage.setItem('coffee_nickname', name.trim())
+}
+
+export function getCompany() {
+  return localStorage.getItem('coffee_company') || ''
+}
+
+export function setCompany(name) {
+  localStorage.setItem('coffee_company', name.trim())
 }
 
 /**

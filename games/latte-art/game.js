@@ -3,18 +3,19 @@
  * Hold to pour milk. Release as close to 8.88 seconds as possible.
  */
 
-import { getNickname } from '/shared/utils.js'
+import { getNickname, getCompany } from '/shared/utils.js'
 import { vibrateShort, vibrateMedium, vibrateHeavy, vibratePattern } from '/shared/haptics.js'
 import { submitScore, fetchLeaderboard, renderLeaderboard } from '/shared/leaderboard.js'
+import { initLocale, getLocale } from '/shared/i18n.js'
 
 const TARGET = 8.88
 const MAX_TIME = 12
 const GRADES = [
-  { maxDelta: 0.01, cn: '大师', en: 'Master', cls: 'master', messages: ['完美的一手 · Perfection in a pour', '你就是拉花之神 · The latte art deity'] },
-  { maxDelta: 0.10, cn: '精准', en: 'Precision', cls: 'precision', messages: ['几乎完美 · Almost flawless', '极致专注 · Razor-sharp focus'] },
-  { maxDelta: 0.30, cn: '漂亮', en: 'Beautiful', cls: 'beautiful', messages: ['手感不错 · Good instinct', '越来越近了 · Getting closer'] },
-  { maxDelta: 1.00, cn: '不错', en: 'Not Bad', cls: 'notbad', messages: ['继续练习 · Keep practicing', '感觉在了 · The feel is there'] },
-  { maxDelta: Infinity, cn: '再来', en: 'Try Again', cls: 'tryagain', messages: ['时间是门艺术 · Timing is an art', '再倒一杯 · Pour another'] },
+  { maxDelta: 0.01, cn: '大师', en: 'Master', cls: 'master', messagesZh: ['完美的一手', '你就是拉花之神'], messagesEn: ['Perfection in a pour', 'The latte art deity'] },
+  { maxDelta: 0.10, cn: '精准', en: 'Precision', cls: 'precision', messagesZh: ['几乎完美', '极致专注'], messagesEn: ['Almost flawless', 'Razor-sharp focus'] },
+  { maxDelta: 0.30, cn: '漂亮', en: 'Beautiful', cls: 'beautiful', messagesZh: ['手感不错', '越来越近了'], messagesEn: ['Good instinct', 'Getting closer'] },
+  { maxDelta: 1.00, cn: '不错', en: 'Not Bad', cls: 'notbad', messagesZh: ['继续练习', '感觉在了'], messagesEn: ['Keep practicing', 'The feel is there'] },
+  { maxDelta: Infinity, cn: '再来', en: 'Try Again', cls: 'tryagain', messagesZh: ['时间是门艺术', '再倒一杯'], messagesEn: ['Timing is an art', 'Pour another'] },
 ]
 
 // --- State ---
@@ -23,6 +24,7 @@ let state = {
   startTime: 0,
   elapsed: 0,
   animFrame: null,
+  lastResult: null, // { elapsed, delta, grade, sign }
 }
 
 // --- DOM refs ---
@@ -143,7 +145,7 @@ function startPour() {
   pourStream.classList.add('active')
   steamContainer.classList.add('active')
   pourBtn.classList.add('pressing')
-  pourHint.textContent = '松开 · Release'
+  pourHint.textContent = getLocale() === 'zh' ? '松开' : 'Release'
   vibrateMedium()
 
   state.animFrame = requestAnimationFrame(gameLoop)
@@ -182,30 +184,44 @@ function endPour() {
 function showResult(elapsed) {
   const delta = Math.abs(elapsed - TARGET)
   const grade = GRADES.find(g => delta < g.maxDelta)
-  const message = grade.messages[Math.floor(Math.random() * grade.messages.length)]
   const sign = elapsed >= TARGET ? '+' : '-'
 
-  // Populate result
-  $('#result-time').textContent = elapsed.toFixed(2)
-  $('#result-delta').textContent = `${sign}${delta.toFixed(2)}s`
-  $('#result-grade').textContent = `${grade.cn} · ${grade.en}`
-  $('#result-grade').className = `result-grade ${grade.cls}`
-  $('#result-message').textContent = message
+  // Store for locale re-render
+  state.lastResult = { elapsed, delta, grade, sign }
 
-  // Mini cup SVG in result (clone and show revealed state)
+  // Mini cup SVG in result
   const resultCup = $('#result-cup-svg')
   const resultMask = resultCup.querySelector('#result-reveal-circle')
   const progress = Math.min(elapsed / TARGET, 1)
   resultMask.setAttribute('r', easeOutCubic(progress) * 55)
+
+  // Render locale-dependent text
+  renderResultText()
 
   // Show result screen
   gameScreen.classList.add('hidden')
   resultScreen.classList.remove('hidden')
 
   // Submit score & load leaderboard
-  const nickname = getNickname() || '匿名玩家'
-  submitScore({ game: 'latte-art', nickname, score: delta, grade: `${grade.cn} · ${grade.en}` })
+  const locale = getLocale()
+  const nickname = getNickname() || (locale === 'zh' ? '匿名玩家' : 'Anonymous')
+  const company = getCompany()
+  submitScore({ game: 'latte-art', nickname, company, score: delta, grade: locale === 'zh' ? grade.cn : grade.en })
   loadLeaderboard(delta, nickname)
+}
+
+function renderResultText() {
+  if (!state.lastResult) return
+  const { elapsed, delta, grade, sign } = state.lastResult
+  const locale = getLocale()
+  const messages = locale === 'zh' ? grade.messagesZh : grade.messagesEn
+  const message = messages[Math.floor(Math.random() * messages.length)]
+
+  $('#result-time').textContent = elapsed.toFixed(2)
+  $('#result-delta').textContent = `${sign}${delta.toFixed(2)}s`
+  $('#result-grade').textContent = locale === 'zh' ? grade.cn : grade.en
+  $('#result-grade').className = `result-grade ${grade.cls}`
+  $('#result-message').textContent = message
 }
 
 async function loadLeaderboard(currentScore, currentNickname) {
@@ -224,7 +240,7 @@ function resetGame() {
   state.elapsed = 0
   setRevealProgress(0)
   updateTimer(0)
-  pourHint.textContent = '按住倒奶 · Hold to Pour'
+  pourHint.textContent = getLocale() === 'zh' ? '按住倒奶' : 'Hold to Pour'
   timerEl.classList.remove('warm', 'hot', 'target', 'danger')
   resultScreen.classList.add('hidden')
   gameScreen.classList.remove('hidden')
@@ -254,6 +270,23 @@ document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: fal
 
 // Again button
 $('#btn-again').addEventListener('click', resetGame)
+
+// Init locale
+initLocale()
+
+// Re-render result screen when locale toggles
+window.addEventListener('localechange', () => {
+  if (state.phase === 'result' && state.lastResult) {
+    renderResultText()
+    // Re-render leaderboard in new locale
+    const nickname = getNickname() || (getLocale() === 'zh' ? '匿名玩家' : 'Anonymous')
+    loadLeaderboard(state.lastResult.delta, nickname)
+  }
+  // Update pour hint if on idle screen
+  if (state.phase === 'idle') {
+    pourHint.textContent = getLocale() === 'zh' ? '按住倒奶' : 'Hold to Pour'
+  }
+})
 
 // Export for potential external use
 export { resetGame }

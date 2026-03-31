@@ -3,15 +3,12 @@
  * Fetches from Cloudflare Worker API, renders into a container
  */
 
+import { getLocale } from '/shared/i18n.js'
+
 const API_BASE = '/api/leaderboard'
 
 /**
  * Submit a score to the leaderboard
- * @param {Object} entry
- * @param {string} entry.game - 'latte-art' | 'tap-tap' | 'cup-stack'
- * @param {string} entry.nickname
- * @param {number} entry.score
- * @param {string} [entry.grade]
  */
 export async function submitScore(entry) {
   try {
@@ -29,9 +26,6 @@ export async function submitScore(entry) {
 
 /**
  * Fetch top scores for a game
- * @param {string} game
- * @param {number} [limit=10]
- * @returns {Promise<Array>}
  */
 export async function fetchLeaderboard(game, limit = 10) {
   try {
@@ -47,20 +41,18 @@ export async function fetchLeaderboard(game, limit = 10) {
 
 /**
  * Render leaderboard into a container element
- * @param {HTMLElement} container
- * @param {Array} scores
- * @param {Object} [options]
- * @param {number} [options.currentScore] - highlight matching score
- * @param {string} [options.currentNickname]
- * @param {boolean} [options.lowerIsBetter] - for latte-art (delta scoring)
  */
 export function renderLeaderboard(container, scores, options = {}) {
+  const t = getLocale() === 'zh'
+    ? { title: '排行榜', empty: '暂无记录' }
+    : { title: 'Leaderboard', empty: 'No scores yet' }
+
   if (!scores.length) {
     container.innerHTML = `
       <div class="leaderboard">
-        <div class="leaderboard-title">排行榜 · Leaderboard</div>
+        <div class="leaderboard-title">${t.title}</div>
         <p style="text-align:center;color:var(--text-secondary);font-size:0.85rem;padding:var(--space-lg)">
-          暂无记录 · No scores yet
+          ${t.empty}
         </p>
       </div>`
     return
@@ -85,7 +77,7 @@ export function renderLeaderboard(container, scores, options = {}) {
 
   container.innerHTML = `
     <div class="leaderboard">
-      <div class="leaderboard-title">排行榜 · Leaderboard</div>
+      <div class="leaderboard-title">${t.title}</div>
       ${rows}
     </div>`
 }
