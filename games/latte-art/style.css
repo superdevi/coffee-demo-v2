@@ -495,21 +495,69 @@
   text-shadow: 0 0 16px rgba(232, 201, 160, 0.6), 0 2px 12px rgba(0, 0, 0, 0.7);
 }
 
+/* Timer color journey: pink → green → gold */
 .timer.warm {
-  color: var(--peach);
+  color: #e8a0b0; /* soft pink like the flowers */
 }
 
 .timer.hot {
-  color: var(--terracotta);
+  color: #7fffda; /* green — getting close */
 }
 
 .timer.target {
-  color: var(--neon);
+  color: #7fffda; /* bright green — almost there */
   transform: scale(1.1);
 }
 
+.timer.perfect-zone {
+  color: #ffd700; /* gold — you're in the zone! */
+  transform: scale(1.15);
+  text-shadow: 0 0 24px rgba(255, 215, 0, 0.6), 0 0 48px rgba(255, 215, 0, 0.3);
+}
+
 .timer.danger {
-  color: var(--terracotta);
+  color: #e06060; /* red — overpour */
+}
+
+/* Perfect zone: gold border flash */
+.game-screen.perfect-zone::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  border: 3px solid rgba(255, 215, 0, 0.4);
+  border-radius: 0;
+  pointer-events: none;
+  z-index: 999;
+  animation: zone-pulse 0.8s ease-in-out infinite;
+}
+
+@keyframes zone-pulse {
+  0%, 100% { border-color: rgba(255, 215, 0, 0.15); }
+  50% { border-color: rgba(255, 215, 0, 0.5); }
+}
+
+/* Screen shake on overpour */
+@keyframes screen-shake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-3px, 2px); }
+  50% { transform: translate(3px, -2px); }
+  75% { transform: translate(-2px, -3px); }
+}
+
+.game-screen.overpour {
+  animation: screen-shake 0.15s ease-in-out infinite;
+}
+
+/* Cup shake with variable intensity */
+@keyframes cup-shake-var {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(calc(-2px * var(--shake-intensity, 0)), calc(1px * var(--shake-intensity, 0))) rotate(calc(-0.5deg * var(--shake-intensity, 0))); }
+  50% { transform: translate(calc(2px * var(--shake-intensity, 0)), calc(-1px * var(--shake-intensity, 0))) rotate(calc(0.5deg * var(--shake-intensity, 0))); }
+  75% { transform: translate(calc(-1px * var(--shake-intensity, 0)), calc(-2px * var(--shake-intensity, 0))) rotate(calc(-0.3deg * var(--shake-intensity, 0))); }
+}
+
+.cup-container.shake {
+  animation: cup-shake-var 0.12s ease-in-out infinite;
 }
 
 /* --- Heartbeat Ring --- */
@@ -596,50 +644,62 @@
 }
 
 /* --- Pour Button (centered on cup, user drags down to pour) --- */
-.pour-btn {
+/* Invisible touch target covering the cup */
+.pour-touch-target {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 110px;
-  height: 110px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: rgba(255, 255, 255, 0.9);
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  font-weight: 300;
-  letter-spacing: 0.12em;
-  line-height: 1.4;
+  background: transparent;
+  border: none;
   cursor: grab;
   -webkit-tap-highlight-color: transparent;
   touch-action: none;
-  box-shadow: 0 0 24px rgba(255, 255, 255, 0.1);
-  will-change: transform, box-shadow;
   z-index: 100;
   pointer-events: auto;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
 }
 
-.pour-btn.pressing {
+.pour-touch-target:active {
   cursor: grabbing;
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.6);
-  box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
 }
 
-.pour-btn-label {
+/* Breathing pulse ring on idle */
+@keyframes cup-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 201, 160, 0); }
+  50% { box-shadow: 0 0 30px 8px rgba(232, 201, 160, 0.15); }
+}
+
+.cup-container:not(.pouring) .pour-touch-target {
+  animation: cup-pulse 3s ease-in-out infinite;
+  border-radius: 50%;
+}
+
+/* Pour hint below the cup */
+.pour-hint {
+  text-align: center;
+  margin-top: var(--space-lg);
+  animation: fade-pulse 3s ease-in-out infinite;
+}
+
+.pour-hint-label {
   font-size: 0.85rem;
   font-weight: 300;
-  letter-spacing: 0.1em;
-  line-height: 1.4;
-  pointer-events: none;
+  letter-spacing: 0.15em;
+  color: rgba(232, 201, 160, 0.6);
+  text-shadow: 0 0 10px rgba(232, 201, 160, 0.2);
+}
+
+@keyframes fade-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.game-screen.pouring .pour-hint {
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 /* --- Username pour label (above timer) --- */
@@ -673,8 +733,7 @@
   font-family: var(--font-body);
   font-size: 0.6rem;
   font-weight: 300;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  letter-spacing: 0.05em;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -749,9 +808,17 @@
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 400;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.05em;
   margin-top: var(--space-sm);
   text-shadow: 0 0 12px currentColor, 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.result-message {
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
 }
 
 .result-grade.master {

@@ -46,13 +46,14 @@
       <!-- Game mode: username + timer -->
       <div class="top-game phase-game">
         <div id="user-pour-label" class="user-pour-label"></div>
-        <div class="timer text-mono">0.00</div>
+        <div class="timer text-mono">8.88</div>
       </div>
 
       <!-- Result mode: minimal score -->
       <div class="result-top phase-result">
         <div id="result-time" class="result-time">0.00</div>
         <div id="result-grade" class="result-grade">—</div>
+        <div id="result-message" class="result-message"></div>
       </div>
     </div>
 
@@ -85,10 +86,8 @@
       <div class="heartbeat-ring"></div>
       <div class="overflow-ring"></div>
 
-      <!-- Milk pour (organic shape) + pour button on top -->
-      <button class="pour-btn phase-game">
-        <span class="pour-btn-label" data-zh="按住倒奶" data-en="HOLD TO POUR">按住倒奶</span>
-      </button>
+      <!-- Invisible touch target over the cup -->
+      <div class="pour-touch-target phase-game"></div>
 
       <!-- Steam -->
       <div class="steam-container">
@@ -154,8 +153,12 @@
       </svg>
     </div>
 
-    <!-- BOTTOM SLOT: actions (result only) -->
+    <!-- BOTTOM SLOT: pour hint (game) + actions (result) -->
     <div class="bottom-slot">
+      <!-- Game mode: pour instruction -->
+      <div class="pour-hint phase-game" id="pour-hint">
+        <span class="pour-hint-label" data-zh="按住杯子 · 倒满8.88秒" data-en="HOLD THE CUP · POUR FOR 8.88s">按住杯子 · 倒满8.88秒</span>
+      </div>
       <!-- Result mode: swipe hint + actions -->
       <div class="result-bottom phase-result">
         <div class="swipe-hint" data-zh="← 滑动查看排行榜" data-en="← SWIPE FOR LEADERBOARD">← 滑动查看排行榜</div>

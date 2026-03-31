@@ -14,11 +14,11 @@ let stopPourLoop = null
 const TARGET = 8.88
 const MAX_TIME = 12
 const GRADES = [
-  { maxDelta: 0.01, cn: '大师', en: 'Master', cls: 'master', messagesZh: ['完美的一手', '你就是拉花之神'], messagesEn: ['Perfection in a pour', 'The latte art deity'] },
-  { maxDelta: 0.10, cn: '精准', en: 'Precision', cls: 'precision', messagesZh: ['几乎完美', '极致专注'], messagesEn: ['Almost flawless', 'Razor-sharp focus'] },
-  { maxDelta: 0.30, cn: '漂亮', en: 'Beautiful', cls: 'beautiful', messagesZh: ['手感不错', '越来越近了'], messagesEn: ['Good instinct', 'Getting closer'] },
-  { maxDelta: 1.00, cn: '不错', en: 'Not Bad', cls: 'notbad', messagesZh: ['继续练习', '感觉在了'], messagesEn: ['Keep practicing', 'The feel is there'] },
-  { maxDelta: Infinity, cn: '再来', en: 'Try Again', cls: 'tryagain', messagesZh: ['时间是门艺术', '再倒一杯'], messagesEn: ['Timing is an art', 'Pour another'] },
+  { maxDelta: 0.01, cn: '封神!', en: 'GODLIKE!', cls: 'master', messagesZh: ['你是开挂的吧?!', '离谱 直接封神'], messagesEn: ['Are you cheating?!', 'Absolutely godlike'] },
+  { maxDelta: 0.10, cn: '精准降落', en: 'INSANE!', cls: 'precision', messagesZh: ['这也太稳了8', '丝滑得不像话'], messagesEn: ['Way too clean', 'Impossibly smooth'] },
+  { maxDelta: 0.30, cn: '666', en: 'SICK!', cls: 'beautiful', messagesZh: ['有点东西哦', '就差亿点点!'], messagesEn: ['You got this!', 'Just a tiny bit off!'] },
+  { maxDelta: 1.00, cn: '差点意思', en: 'Almost!', cls: 'notbad', messagesZh: ['要不再冲一把?', '感觉快了 冲!'], messagesEn: ['One more try?', 'Almost there, go!'] },
+  { maxDelta: Infinity, cn: '翻车了', en: 'Oops!', cls: 'tryagain', messagesZh: ['手滑了哈哈哈', '没事 再来!'], messagesEn: ['Butterfingers lol', 'No worries, again!'] },
 ]
 
 // --- State ---
@@ -40,8 +40,8 @@ const heartbeatRing = $('.heartbeat-ring')
 const overflowRing = $('.overflow-ring')
 const bagua = $('.bagua')
 const bgGlow = $('.bg-glow')
-const pourBtn = $('.pour-btn')
-const pourBtnLabel = $('.pour-btn-label')
+const pourBtn = $('.pour-touch-target')
+const pourHint = $('#pour-hint')
 const milkGlow = $('#milk-glow')
 const lotusArt = $('#lotus-art')
 const overflowFlood = $('#overflow-flood')
@@ -222,22 +222,31 @@ function setRevealProgress(progress, elapsed) {
 // --- Timer Display ---
 function updateTimer(elapsed) {
   timerEl.textContent = elapsed.toFixed(2)
-
-  // Color phases
-  timerEl.classList.remove('warm', 'hot', 'target', 'danger')
-  if (elapsed >= 8.50 && elapsed <= 9.26) {
-    timerEl.classList.add('target')
-  } else if (elapsed > TARGET) {
-    timerEl.classList.add('danger')
-  } else if (elapsed >= 7.0) {
-    timerEl.classList.add('hot')
-  } else if (elapsed >= 6.0) {
-    timerEl.classList.add('warm')
-  }
 }
 
 // --- Tension Escalation ---
 function updateTension(elapsed) {
+  // --- Timer color: pink/red → green → gold ---
+  timerEl.classList.remove('warm', 'hot', 'target', 'danger', 'perfect-zone')
+  if (elapsed >= 8.50 && elapsed <= 9.26) {
+    timerEl.classList.add('perfect-zone')
+  } else if (elapsed > TARGET) {
+    timerEl.classList.add('danger')
+  } else if (elapsed >= 8.0) {
+    timerEl.classList.add('target')
+  } else if (elapsed >= 7.0) {
+    timerEl.classList.add('hot')
+  } else if (elapsed >= 5.0) {
+    timerEl.classList.add('warm')
+  }
+
+  // --- Screen border flash in perfect zone ---
+  if (elapsed >= 8.50 && elapsed <= 9.26) {
+    gameScreen.classList.add('perfect-zone')
+  } else {
+    gameScreen.classList.remove('perfect-zone')
+  }
+
   // Background glow
   bgGlow.classList.remove('active', 'intense')
   if (elapsed >= 8.0) {
@@ -260,27 +269,45 @@ function updateTension(elapsed) {
     sfxTick(elapsed, TARGET)
   }
 
-  // Haptic + heartbeat sound at 8s+
-  if (elapsed >= 8.0 && elapsed < TARGET) {
-    const beatInterval = elapsed >= 8.5 ? 200 : 400
-    const timeSinceBeat = ((elapsed - 8.0) * 1000) % beatInterval
+  // --- Haptic heartbeat: starts at 6s, accelerates toward 8.88 ---
+  if (elapsed >= 6.0 && elapsed < TARGET) {
+    // Beat interval: 600ms at 6s → 150ms at 8.88s (accelerating)
+    const t = (elapsed - 6.0) / (TARGET - 6.0)
+    const beatInterval = 600 - t * 450
+    const timeSinceBeat = ((elapsed - 6.0) * 1000) % beatInterval
     if (timeSinceBeat < 20) {
-      vibrateShort()
-      sfxHeartbeat(elapsed >= 8.5)
+      if (elapsed >= 8.0) {
+        vibrateMedium()
+        sfxHeartbeat(elapsed >= 8.5)
+      } else {
+        vibrateShort()
+      }
     }
   }
 
-  // Danger zone (past target)
-  if (elapsed > TARGET) {
+  // --- Cup shake: starts at 7s with gentle ease-in, intensifies past target ---
+  if (elapsed >= 7.0) {
     cupContainer.classList.add('shake')
-    overflowRing.classList.add('active')
-    // Warning buzz every 0.3s
-    if ((elapsed % 0.3) < 0.02) {
-      sfxWarning()
-    }
+    const shakeT = elapsed > TARGET
+      ? 1.0
+      : Math.pow((elapsed - 7.0) / (TARGET - 7.0), 2)
+    cupContainer.style.setProperty('--shake-intensity', shakeT.toFixed(3))
   } else {
     cupContainer.classList.remove('shake')
+    cupContainer.style.removeProperty('--shake-intensity')
+  }
+
+  // --- Danger zone (past target): screen shake + overflow ---
+  if (elapsed > TARGET) {
+    overflowRing.classList.add('active')
+    gameScreen.classList.add('overpour')
+    if ((elapsed % 0.3) < 0.02) {
+      sfxWarning()
+      vibrateHeavy()
+    }
+  } else {
     overflowRing.classList.remove('active')
+    gameScreen.classList.remove('overpour')
   }
 }
 
@@ -330,8 +357,8 @@ function startPour() {
   if (pourStream) pourStream.classList.add('active')
   steamContainer.classList.add('active')
   bagua.classList.add('pouring')
-  pourBtn.classList.add('pressing')
-  pourBtnLabel.innerHTML = getLocale() === 'zh' ? '松开<br>结束' : 'RELEASE<br>TO FINISH'
+  cupContainer.classList.add('pouring')
+  gameScreen.classList.add('pouring')
   vibrateMedium()
   sfxPourStart()
   stopPourLoop = sfxPourLoop()
@@ -347,17 +374,20 @@ function endPour() {
 
   cancelAnimationFrame(state.animFrame)
   if (pourStream) pourStream.classList.remove('active')
-  pourBtn.classList.remove('pressing')
-  releaseDrag()
+  cupContainer.classList.remove('pouring')
+  gameScreen.classList.remove('pouring')
 
   if (stopPourLoop) { stopPourLoop(); stopPourLoop = null }
   sfxRelease(Math.abs(state.elapsed - TARGET))
   bagua.classList.remove('pouring')
   steamContainer.classList.remove('active')
   cupContainer.classList.remove('shake')
+  cupContainer.style.removeProperty('--shake-intensity')
   heartbeatRing.classList.remove('active', 'fast')
   overflowRing.classList.remove('active')
   bgGlow.classList.remove('active', 'intense')
+  gameScreen.classList.remove('perfect-zone', 'overpour')
+  timerEl.classList.remove('warm', 'hot', 'target', 'danger', 'perfect-zone')
 
   vibrateHeavy()
 
@@ -404,6 +434,8 @@ function renderResultText() {
   $('#result-time').textContent = elapsed.toFixed(2)
   $('#result-grade').textContent = locale === 'zh' ? grade.cn : grade.en
   $('#result-grade').className = `result-grade ${grade.cls}`
+  const msgs = locale === 'zh' ? grade.messagesZh : grade.messagesEn
+  $('#result-message').textContent = msgs[Math.floor(Math.random() * msgs.length)]
 }
 
 async function loadLeaderboard(currentScore, currentNickname) {
@@ -422,9 +454,9 @@ function resetGame() {
   state.phase = 'idle'
   state.elapsed = 0
   setRevealProgress(0, 0)
-  updateTimer(0)
-  pourBtnLabel.innerHTML = getLocale() === 'zh' ? '按住<br>倒奶' : 'HOLD TO<br>POUR'
+  timerEl.textContent = '8.88'
   timerEl.classList.remove('warm', 'hot', 'target', 'danger')
+  timerEl.classList.add('target')
   endGlow.classList.remove('active')
   gameScreen.classList.remove('result')
   if (lbPanel) lbPanel.classList.remove('open')
@@ -542,92 +574,19 @@ async function downloadWallpaper() {
   }, 'image/png')
 }
 
-// --- Free-Drag Physics ---
-const MAX_DRAG = 50
-let dragOriginX = 0, dragOriginY = 0
-let dragX = 0, dragY = 0
-let velX = 0, velY = 0
-let springFrame = null
-
-function applyDragTransform() {
-  const dist = Math.sqrt(dragX * dragX + dragY * dragY)
-  const progress = Math.min(dist / MAX_DRAG, 1)
-  // Rubber-band: the further you drag, the more resistance
-  const rubber = 1 - progress * 0.4
-  const rx = dragX * rubber
-  const ry = dragY * rubber
-  const scale = 1 - progress * 0.1
-  const rot = dragX * 0.15 // slight tilt toward drag direction
-  pourBtn.style.transform = `translate(${rx}px, ${ry}px) scale(${scale}) rotate(${rot}deg)`
-
-  // Glow intensifies with distance
-  const glowSize = 20 + progress * 40
-  const glowAlpha = 0.08 + progress * 0.3
-  pourBtn.style.boxShadow = `0 0 ${glowSize}px rgba(45, 212, 168, ${glowAlpha}), 0 0 ${glowSize * 2}px rgba(45, 212, 168, ${glowAlpha * 0.3})`
-}
-
-function springBack() {
-  // Damped spring simulation
-  const stiffness = 0.15
-  const damping = 0.7
-
-  velX += -dragX * stiffness
-  velY += -dragY * stiffness
-  velX *= damping
-  velY *= damping
-  dragX += velX
-  dragY += velY
-
-  applyDragTransform()
-
-  if (Math.abs(dragX) < 0.3 && Math.abs(dragY) < 0.3 && Math.abs(velX) < 0.1 && Math.abs(velY) < 0.1) {
-    dragX = 0; dragY = 0; velX = 0; velY = 0
-    pourBtn.style.transform = ''
-    pourBtn.style.boxShadow = ''
-    cancelAnimationFrame(springFrame)
-    springFrame = null
-    return
-  }
-  springFrame = requestAnimationFrame(springBack)
-}
-
-function releaseDrag() {
-  if (springFrame) cancelAnimationFrame(springFrame)
-  // Kick off spring with current velocity
-  springFrame = requestAnimationFrame(springBack)
-}
-
 // --- Event Binding ---
 pourBtn.addEventListener('pointerdown', (e) => {
   e.preventDefault()
   pourBtn.setPointerCapture(e.pointerId)
-  if (springFrame) { cancelAnimationFrame(springFrame); springFrame = null }
-  dragOriginX = e.clientX
-  dragOriginY = e.clientY
-  dragX = 0; dragY = 0; velX = 0; velY = 0
   startPour()
-})
-
-pourBtn.addEventListener('pointermove', (e) => {
-  if (state.phase !== 'pouring') return
-  const newX = e.clientX - dragOriginX
-  const newY = e.clientY - dragOriginY
-  // Track velocity for spring release
-  velX = (newX - dragX) * 0.5
-  velY = (newY - dragY) * 0.5
-  dragX = newX
-  dragY = newY
-  applyDragTransform()
 })
 
 pourBtn.addEventListener('pointerup', (e) => {
   e.preventDefault()
-  releaseDrag()
   endPour()
 })
 
 pourBtn.addEventListener('pointercancel', () => {
-  releaseDrag()
   if (state.phase === 'pouring') endPour()
 })
 
@@ -678,8 +637,7 @@ window.addEventListener('localechange', () => {
   }
   // Update pour hint if on idle screen
   if (state.phase === 'idle') {
-    pourBtnLabel.innerHTML = getLocale() === 'zh' ? '按住<br>倒奶' : 'HOLD TO<br>POUR'
-  }
+    }
   updateUserPourLabel()
 })
 
