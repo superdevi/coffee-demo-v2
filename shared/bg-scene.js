@@ -9,7 +9,81 @@ const RING_COUNT = 3
 const CONNECT_DIST = 1.0
 const MOUSE_RADIUS = 2.0
 
-export function initBgScene(canvas) {
+// --- Leaf spritesheet: 3 columns x 2 rows ---
+const LEAF_COLS = 3
+const LEAF_ROWS = 2
+const LEAVES_PER_EDGE = 10 // leaves on each side
+
+/**
+ * Load spritesheet, remove white bg, return 6 textures.
+ */
+function loadLeafTextures() {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      const cw = Math.floor(img.width / LEAF_COLS)
+      const ch = Math.floor(img.height / LEAF_ROWS)
+      const textures = []
+
+      for (let row = 0; row < LEAF_ROWS; row++) {
+        for (let col = 0; col < LEAF_COLS; col++) {
+          const c = document.createElement('canvas')
+          c.width = cw
+          c.height = ch
+          const ctx = c.getContext('2d')
+          ctx.drawImage(img, col * cw, row * ch, cw, ch, 0, 0, cw, ch)
+
+          // Remove white background
+          const imageData = ctx.getImageData(0, 0, cw, ch)
+          const d = imageData.data
+          for (let i = 0; i < d.length; i += 4) {
+            const r = d[i], g = d[i + 1], b = d[i + 2]
+            if (r > 230 && g > 230 && b > 230) {
+              d[i + 3] = 0
+            } else if (r > 200 && g > 200 && b > 200) {
+              d[i + 3] = Math.floor((255 - Math.max(r, g, b)) * 4.6)
+            }
+          }
+          ctx.putImageData(imageData, 0, 0)
+
+          const tex = new THREE.CanvasTexture(c)
+          tex.colorSpace = THREE.SRGBColorSpace
+          textures.push(tex)
+        }
+      }
+      resolve(textures)
+    }
+    img.src = '/assets/sprites/leaves.png'
+  })
+}
+
+/**
+ * Create border leaves as mesh planes (not sprites)
+ * so we can set custom pivot for stem-sway rotation.
+ */
+function createLeafMesh(tex, size) {
+  // Plane geometry with pivot at bottom-center (stem)
+  const geo = new THREE.PlaneGeometry(size, size)
+  // Shift vertices up so origin is at bottom center
+  const pos = geo.attributes.position
+  for (let i = 0; i < pos.count; i++) {
+    pos.setY(i, pos.getY(i) + size / 2)
+  }
+  pos.needsUpdate = true
+
+  const mat = new THREE.MeshBasicMaterial({
+    map: tex,
+    transparent: true,
+    opacity: 0.18,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    color: new THREE.Color().setHSL(0.42 + Math.random() * 0.06, 0.35, 0.22)
+  })
+  return new THREE.Mesh(geo, mat)
+}
+
+export async function initBgScene(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.setClearColor(0x000000, 0)
@@ -59,22 +133,18 @@ export function initBgScene(canvas) {
     vertexShader: `
       attribute float size;
       varying vec3 vColor;
-      varying float vSize;
       uniform float uPixelRatio;
       void main() {
         vColor = color;
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
         gl_PointSize = size * uPixelRatio * (4.0 / -mv.z);
-        vSize = gl_PointSize;
         gl_Position = projectionMatrix * mv;
       }
     `,
     fragmentShader: `
       varying vec3 vColor;
-      varying float vSize;
       void main() {
         float d = length(gl_PointCoord - 0.5) * 2.0;
-        // soft glow: bright core + wide falloff
         float core = 1.0 - smoothstep(0.0, 0.4, d);
         float glow = 1.0 - smoothstep(0.0, 1.0, d);
         float alpha = core * 0.9 + glow * 0.35;
@@ -105,17 +175,72 @@ export function initBgScene(canvas) {
   const lines = new THREE.LineSegments(lineGeo, lineMat)
   scene.add(lines)
 
-  // --- Mouse tracking (listen on window since canvas is pointer-events:none) ---
+  // --- Leaf border ---
+  const leafTextures = await loadLeafTextures()
+  const leafData = []
+
+  // Visible bounds at z=0
+  const vFov = camera.fov * Math.PI / 180
+  const visH = 2 * Math.tan(vFov / 2) * camera.position.z
+  const visW = visH * (window.innerWidth / window.innerHeight)
+  const halfW = visW / 2
+  const halfH = visH / 2
+
+  // Place leaves along each edge
+  // side 0=left, 1=right, 2=top, 3=bottom
+  for (let side = 0; side < 4; side++) {
+    for (let i = 0; i < LEAVES_PER_EDGE; i++) {
+      const tex = leafTextures[Math.floor(Math.random() * leafTextures.length)]
+      const leafSize = 0.4 + Math.random() * 0.35
+      const mesh = createLeafMesh(tex, leafSize)
+
+      let x, y, baseRot
+      const t = (i / (LEAVES_PER_EDGE - 1)) * 2 - 1 // -1 to 1 along edge
+      const jitter = (Math.random() - 0.5) * 0.3
+
+      if (side === 0) {        // left edge — stems point right (inward)
+        x = -halfW - 0.05 + Math.random() * 0.15
+        y = t * halfH + jitter
+        baseRot = -Math.PI / 2 + (Math.random() - 0.5) * 0.6
+      } else if (side === 1) {  // right edge — stems point left
+        x = halfW + 0.05 - Math.random() * 0.15
+        y = t * halfH + jitter
+        baseRot = Math.PI / 2 + (Math.random() - 0.5) * 0.6
+      } else if (side === 2) {  // top edge — stems point down
+        x = t * halfW + jitter
+        y = halfH + 0.05 - Math.random() * 0.15
+        baseRot = Math.PI + (Math.random() - 0.5) * 0.6
+      } else {                  // bottom edge — stems point up
+        x = t * halfW + jitter
+        y = -halfH - 0.05 + Math.random() * 0.15
+        baseRot = 0 + (Math.random() - 0.5) * 0.6
+      }
+
+      mesh.position.set(x, y, -1)
+      mesh.rotation.z = baseRot
+
+      scene.add(mesh)
+      leafData.push({
+        mesh,
+        baseRot,
+        swaySpeed: 0.4 + Math.random() * 0.4,
+        swayAmp: 0.04 + Math.random() * 0.06,
+        swayOffset: Math.random() * Math.PI * 2,
+      })
+    }
+  }
+
+  // --- Mouse tracking ---
   const mouse = new THREE.Vector2(9999, 9999)
   const mouseWorld = new THREE.Vector3()
   const raycaster = new THREE.Raycaster()
   const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0)
 
   function onPointerMove(e) {
-    const x = e.touches ? e.touches[0].clientX : e.clientX
-    const y = e.touches ? e.touches[0].clientY : e.clientY
-    mouse.x = (x / window.innerWidth) * 2 - 1
-    mouse.y = -(y / window.innerHeight) * 2 + 1
+    const px = e.touches ? e.touches[0].clientX : e.clientX
+    const py = e.touches ? e.touches[0].clientY : e.clientY
+    mouse.x = (px / window.innerWidth) * 2 - 1
+    mouse.y = -(py / window.innerHeight) * 2 + 1
   }
 
   function onPointerLeave() {
@@ -161,7 +286,6 @@ export function initBgScene(canvas) {
       let y = m.baseY + Math.sin(t * 0.3 + m.angle * 2) * 0.2
       let z = Math.sin(m.angle) * m.radius * 0.3
 
-      // Mouse repulsion
       const dx = x - mouseWorld.x
       const dy = y - mouseWorld.y
       const dist = Math.sqrt(dx * dx + dy * dy)
@@ -199,6 +323,12 @@ export function initBgScene(canvas) {
     lineGeo.setDrawRange(0, lineIdx * 2)
     lineGeo.attributes.position.needsUpdate = true
     lineGeo.attributes.color.needsUpdate = true
+
+    // Sway leaves from their stem pivot
+    for (const leaf of leafData) {
+      const sway = Math.sin(t * leaf.swaySpeed + leaf.swayOffset) * leaf.swayAmp
+      leaf.mesh.rotation.z = leaf.baseRot + sway
+    }
 
     // Subtle camera sway
     camera.position.x = Math.sin(t * 0.1) * 0.15
