@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 200" fill="none">
+  <!-- Modular leaf cluster — left side. Swap this file to change decoration. -->
+  <!-- Palette: sage #8BA8A0, teal #5A9A8F, teal-deep #4A6B6F -->
+
+  <!-- Large leaf -->
+  <path d="M60,180 C45,150 10,120 8,70 C12,68 20,72 28,80 C35,90 48,130 60,180Z" fill="#8BA8A0" opacity="0.5"/>
+  <path d="M60,180 C55,155 35,125 20,80" stroke="#5A9A8F" stroke-width="0.8" opacity="0.4" fill="none"/>
+
+  <!-- Medium leaf -->
+  <path d="M55,165 C35,145 5,130 2,95 C6,93 14,98 22,108 C28,118 42,140 55,165Z" fill="#5A9A8F" opacity="0.35"/>
+  <path d="M55,165 C42,148 22,128 10,100" stroke="#4A6B6F" stroke-width="0.6" opacity="0.3" fill="none"/>
+
+  <!-- Small accent leaf -->
+  <path d="M48,140 C38,125 18,115 15,90 C18,89 24,94 30,102 C34,110 42,125 48,140Z" fill="#4A6B6F" opacity="0.25"/>
+
+  <!-- Tiny bud -->
+  <circle cx="30" cy="72" r="2.5" fill="#8BA8A0" opacity="0.3"/>
+  <circle cx="14" cy="88" r="1.8" fill="#5A9A8F" opacity="0.25"/>
+</svg>

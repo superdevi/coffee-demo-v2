@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#0a0a0f">
+  <meta name="theme-color" content="#FAF6F1">
   <title>拉花 · Latte Art — 8.88</title>
-  <script type="module" crossorigin src="/assets/latteArt-CEr5Cw4f.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/i18n-DGmuMSFG.js">
-  <link rel="modulepreload" crossorigin href="/assets/utils-CBdnpe-u.js">
-  <link rel="stylesheet" crossorigin href="/assets/i18n-BG_Cl_Wu.css">
-  <link rel="stylesheet" crossorigin href="/assets/latteArt-BJXx1V65.css">
+  <script type="module" crossorigin src="/assets/latteArt-CZv0QV6U.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/i18n-CYArclXf.js">
+  <link rel="modulepreload" crossorigin href="/assets/leaderboard-BcnF99tr.js">
+  <link rel="stylesheet" crossorigin href="/assets/i18n-B9QKkimO.css">
+  <link rel="stylesheet" crossorigin href="/assets/latteArt-CvfTQrNw.css">
 </head>
 <body>
   <a href="/" class="back-btn">←</a>
@@ -18,13 +18,39 @@
   <!-- ====== GAME SCREEN ====== -->
   <div id="game-screen" class="screen game-screen">
 
-    <!-- Cup SVG -->
+    <!-- Cup SVG with Bagua -->
     <div class="cup-container">
+      <!-- Ambient glow under bagua -->
+      <div class="bagua-glow"></div>
+      <!-- Spinning bagua ring (inline for <use> refs to work) -->
+      <svg class="bagua" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <defs>
+          <g id="s"><line x1="-40" y1="0" x2="40" y2="0" stroke="#58e6da" stroke-width="6" stroke-linecap="round"/></g>
+          <g id="b"><line x1="-40" y1="0" x2="-10" y2="0" stroke="#58e6da" stroke-width="6" stroke-linecap="round"/><line x1="10" y1="0" x2="40" y2="0" stroke="#58e6da" stroke-width="6" stroke-linecap="round"/></g>
+        </defs>
+        <circle cx="512" cy="512" r="360" stroke="#58e6da" stroke-width="2" opacity="0.6" fill="none"/>
+        <circle cx="512" cy="512" r="300" stroke="#58e6da" stroke-width="2" opacity="0.6" fill="none"/>
+        <g transform="translate(512 512)">
+          <g transform="translate(0,-280)"><use href="#s" transform="translate(0,-20)"/><use href="#b"/><use href="#s" transform="translate(0,20)"/></g>
+          <g transform="translate(200,-200) rotate(45)"><use href="#b" transform="translate(0,-20)"/><use href="#b"/><use href="#b" transform="translate(0,20)"/></g>
+          <g transform="translate(280,0) rotate(90)"><use href="#b" transform="translate(0,-20)"/><use href="#s"/><use href="#s" transform="translate(0,20)"/></g>
+          <g transform="translate(200,200) rotate(135)"><use href="#s" transform="translate(0,-20)"/><use href="#s"/><use href="#s" transform="translate(0,20)"/></g>
+          <g transform="translate(0,280) rotate(180)"><use href="#b" transform="translate(0,-20)"/><use href="#s"/><use href="#b" transform="translate(0,20)"/></g>
+          <g transform="translate(-200,200) rotate(225)"><use href="#s" transform="translate(0,-20)"/><use href="#b"/><use href="#b" transform="translate(0,20)"/></g>
+          <g transform="translate(-280,0) rotate(270)"><use href="#s" transform="translate(0,-20)"/><use href="#s"/><use href="#b" transform="translate(0,20)"/></g>
+          <g transform="translate(-200,-200) rotate(315)"><use href="#b" transform="translate(0,-20)"/><use href="#s"/><use href="#b" transform="translate(0,20)"/></g>
+        </g>
+        <circle cx="512" cy="512" r="160" stroke="#58e6da" stroke-width="2" opacity="0.6" fill="none"/>
+      </svg>
       <div class="heartbeat-ring"></div>
       <div class="overflow-ring"></div>
 
-      <!-- Pour stream -->
-      <div class="pour-stream"></div>
+      <!-- Milk pour (organic shape) -->
+      <svg class="pour-stream" viewBox="0 0 30 100" xmlns="http://www.w3.org/2000/svg">
+        <path class="milk-flow" d="M15,0 C13,15 10,25 8,40 C6,55 12,65 15,75 C18,65 24,55 22,40 C20,25 17,15 15,0Z" fill="white" opacity="0.85"/>
+        <path class="milk-flow-highlight" d="M14,5 C13,18 11,30 10,45 C9,55 13,62 15,70" stroke="white" stroke-width="2" opacity="0.4" fill="none" stroke-linecap="round"/>
+        <ellipse class="milk-drip" cx="15" cy="88" rx="8" ry="5" fill="white" opacity="0.5"/>
+      </svg>
 
       <!-- Steam -->
       <div class="steam-container">
@@ -64,6 +90,9 @@
         <!-- Coffee surface (crema) -->
         <circle cx="130" cy="130" r="108" fill="url(#crema-gradient)"/>
 
+        <!-- Milk whitening overlay (grows when over-pouring) -->
+        <circle id="crema-whiten" cx="130" cy="130" r="108" fill="white" opacity="0"/>
+
         <!-- Crema speckle texture -->
         <g opacity="0.15">
           <circle cx="100" cy="110" r="1" fill="#d4a574"/>
@@ -82,42 +111,33 @@
         <!-- Milk impact glow (visible while pouring) -->
         <circle id="milk-glow" cx="130" cy="138" r="0" fill="rgba(255,255,255,0.15)" style="opacity:0"/>
 
-        <!-- ===== LOTUS LATTE ART ===== -->
+        <!-- ===== LOTUS LATTE ART (from SVG source) ===== -->
         <g mask="url(#reveal-mask)">
-          <!-- Center dot -->
-          <circle cx="130" cy="130" r="6" fill="#f0e6d6" opacity="0.9"/>
-
-          <!-- Inner petals (5, small) -->
-          <path d="M130,124 Q122,108 130,92 Q138,108 130,124Z" fill="#f0e6d6" opacity="0.9"/>
-          <path d="M136,126 Q152,116 162,100 Q148,118 136,126Z" fill="#f0e6d6" opacity="0.85"/>
-          <path d="M134,134 Q152,138 168,130 Q150,140 134,134Z" fill="#ede0d0" opacity="0.85"/>
-          <path d="M126,134 Q108,138 92,130 Q110,140 126,134Z" fill="#ede0d0" opacity="0.85"/>
-          <path d="M124,126 Q108,116 98,100 Q112,118 124,126Z" fill="#f0e6d6" opacity="0.85"/>
-
-          <!-- Outer petals (5, large, offset rotation) -->
-          <path d="M130,120 Q118,88 130,58 Q142,88 130,120Z" fill="#e8d8c5" opacity="0.7"/>
-          <path d="M138,124 Q168,104 192,82 Q162,112 138,124Z" fill="#e3d0bb" opacity="0.65"/>
-          <path d="M136,138 Q166,148 194,148 Q164,154 136,138Z" fill="#ddc8b0" opacity="0.6"/>
-          <path d="M124,138 Q94,148 66,148 Q96,154 124,138Z" fill="#ddc8b0" opacity="0.6"/>
-          <path d="M122,124 Q92,104 68,82 Q98,112 122,124Z" fill="#e3d0bb" opacity="0.65"/>
-
-          <!-- Bottom petals (3, filling lower half) -->
-          <path d="M130,140 Q118,168 130,198 Q142,168 130,140Z" fill="#e8d8c5" opacity="0.65"/>
-          <path d="M124,138 Q96,162 78,188 Q102,160 124,138Z" fill="#ddc8b0" opacity="0.55"/>
-          <path d="M136,138 Q164,162 182,188 Q158,160 136,138Z" fill="#ddc8b0" opacity="0.55"/>
-
-          <!-- Inner detail lines -->
-          <line x1="130" y1="124" x2="130" y2="96" stroke="#d4a574" stroke-width="1" opacity="0.3"/>
-          <line x1="136" y1="126" x2="156" y2="108" stroke="#d4a574" stroke-width="1" opacity="0.3"/>
-          <line x1="134" y1="134" x2="158" y2="134" stroke="#d4a574" stroke-width="1" opacity="0.3"/>
-          <line x1="126" y1="134" x2="102" y2="134" stroke="#d4a574" stroke-width="1" opacity="0.3"/>
-          <line x1="124" y1="126" x2="104" y2="108" stroke="#d4a574" stroke-width="1" opacity="0.3"/>
+          <!-- Overflow milk flood (hidden by default, grows when over-pouring) -->
+          <circle id="overflow-flood" cx="130" cy="130" r="0" fill="rgba(240,230,214,0.6)" opacity="0"/>
+          <g id="lotus-art" transform="translate(130,130) scale(0.36) translate(-256,-256)" fill="#f0e6d6">
+            <!-- Center petal -->
+            <path d="M266.99,109.868c-6.283-5.511-15.696-5.511-21.979,0c-3.022,2.641-74.078,65.713-74.078,146.133s71.056,143.491,74.078,146.133c3.141,2.756,7.066,4.131,10.989,4.131s7.848-1.375,10.989-4.131c3.022-2.641,74.078-65.713,74.078-146.133S270.011,112.51,266.99,109.868z" opacity="0.92"/>
+            <!-- Right petal -->
+            <path d="M466.187,199.603c-0.489-8.495-7.283-15.267-15.772-15.729c-2.314-0.098-42.609-1.937-86.52,11.643c6.377,18.6,10.563,38.864,10.563,60.484c0,63.348-34.941,115.647-60.36,145.357c31.604-5.956,69.817-18.946,98.731-47.193C471.003,297.354,466.405,203.57,466.187,199.603z" opacity="0.85"/>
+            <!-- Left petal -->
+            <path d="M137.542,256.001c0-21.623,4.187-41.887,10.565-60.49c-43.908-13.585-84.202-11.749-86.523-11.636c-8.489,0.462-15.282,7.234-15.772,15.729c-0.217,3.967-4.815,97.751,53.359,154.562c28.917,28.243,67.126,41.233,98.725,47.19C172.49,371.659,137.542,319.355,137.542,256.001z" opacity="0.85"/>
+            <!-- Bottom-left sepal -->
+            <path d="M50.173,346.282c-26.719,14.308-43.764,30.045-44.883,31.09c-7.053,6.587-7.053,17.802,0,24.392c2.381,2.228,59.207,54.588,131.056,54.588c28.955,0,55.379-8.535,76.875-18.834C146.461,429.771,86.645,402.72,50.173,346.282z" opacity="0.8"/>
+            <!-- Bottom-right sepal -->
+            <path d="M506.71,377.372c-1.119-1.044-18.164-16.779-44.881-31.088c-36.475,56.45-96.296,83.488-163.049,91.234c21.494,10.298,47.918,18.833,76.873,18.833c71.849,0,128.675-52.359,131.056-54.588C513.764,395.176,513.764,383.96,506.71,377.372z" opacity="0.8"/>
+            <!-- Bottom center -->
+            <path d="M256.019,451.981c-11.493,7.317-25.462,14.964-41.429,21.508c15.773,8.381,31.014,13.72,36.203,15.423c3.341,1.092,6.971,1.125,10.413,0c5.189-1.703,20.431-7.041,36.203-15.423C281.487,466.961,267.51,459.27,256.019,451.981z" opacity="0.75"/>
+            <!-- Top buds -->
+            <circle cx="161.393" cy="105.741" r="16.696" opacity="0.7"/>
+            <circle cx="356.179" cy="105.741" r="16.696" opacity="0.7"/>
+            <circle cx="256.004" cy="38.954" r="16.696" opacity="0.7"/>
+          </g>
         </g>
 
         <!-- Cup rim (on top of everything) -->
         <circle cx="130" cy="130" r="118" fill="none" stroke="#a89070" stroke-width="5" opacity="0.25"/>
-        <!-- Rim highlight -->
-        <path d="M40,100 A118,118 0 0,1 130,12" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
+
       </svg>
     </div>
 
@@ -134,8 +154,28 @@
   <!-- ====== RESULT SCREEN ====== -->
   <div id="result-screen" class="screen result-screen hidden">
 
-    <!-- Mini cup showing revealed state -->
-    <svg id="result-cup-svg" class="result-cup" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+    <!-- Mini cup with bagua -->
+    <div class="result-cup-container">
+      <svg class="bagua result-bagua" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <defs>
+          <g id="rs"><line x1="-40" y1="0" x2="40" y2="0" stroke="#58e6da" stroke-width="6" stroke-linecap="round"/></g>
+          <g id="rb"><line x1="-40" y1="0" x2="-10" y2="0" stroke="#58e6da" stroke-width="6" stroke-linecap="round"/><line x1="10" y1="0" x2="40" y2="0" stroke="#58e6da" stroke-width="6" stroke-linecap="round"/></g>
+        </defs>
+        <circle cx="512" cy="512" r="360" stroke="#58e6da" stroke-width="2" opacity="0.6" fill="none"/>
+        <circle cx="512" cy="512" r="300" stroke="#58e6da" stroke-width="2" opacity="0.6" fill="none"/>
+        <g transform="translate(512 512)">
+          <g transform="translate(0,-280)"><use href="#rs" transform="translate(0,-20)"/><use href="#rb"/><use href="#rs" transform="translate(0,20)"/></g>
+          <g transform="translate(200,-200) rotate(45)"><use href="#rb" transform="translate(0,-20)"/><use href="#rb"/><use href="#rb" transform="translate(0,20)"/></g>
+          <g transform="translate(280,0) rotate(90)"><use href="#rb" transform="translate(0,-20)"/><use href="#rs"/><use href="#rs" transform="translate(0,20)"/></g>
+          <g transform="translate(200,200) rotate(135)"><use href="#rs" transform="translate(0,-20)"/><use href="#rs"/><use href="#rs" transform="translate(0,20)"/></g>
+          <g transform="translate(0,280) rotate(180)"><use href="#rb" transform="translate(0,-20)"/><use href="#rs"/><use href="#rb" transform="translate(0,20)"/></g>
+          <g transform="translate(-200,200) rotate(225)"><use href="#rs" transform="translate(0,-20)"/><use href="#rb"/><use href="#rb" transform="translate(0,20)"/></g>
+          <g transform="translate(-280,0) rotate(270)"><use href="#rs" transform="translate(0,-20)"/><use href="#rs"/><use href="#rb" transform="translate(0,20)"/></g>
+          <g transform="translate(-200,-200) rotate(315)"><use href="#rb" transform="translate(0,-20)"/><use href="#rs"/><use href="#rb" transform="translate(0,20)"/></g>
+        </g>
+        <circle cx="512" cy="512" r="160" stroke="#58e6da" stroke-width="2" opacity="0.6" fill="none"/>
+      </svg>
+      <svg id="result-cup-svg" class="result-cup" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id="result-crema" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stop-color="#c8956a"/>
@@ -153,35 +193,49 @@
         </mask>
       </defs>
       <circle cx="55" cy="55" r="50" fill="url(#result-crema)"/>
+      <circle id="result-crema-whiten" cx="55" cy="55" r="50" fill="white" opacity="0"/>
       <g mask="url(#result-reveal-mask)">
-        <line x1="55" y1="88" x2="55" y2="22" stroke="#f0e6d6" stroke-width="1.8" stroke-linecap="round"/>
-        <path d="M55,85 Q38,79 30,72 Q39,77 55,82" fill="#f0e6d6" opacity="0.9"/>
-        <path d="M55,85 Q72,79 80,72 Q71,77 55,82" fill="#f0e6d6" opacity="0.9"/>
-        <path d="M55,74 Q40,69 33,62 Q41,67 55,71" fill="#ede0d0" opacity="0.88"/>
-        <path d="M55,74 Q70,69 77,62 Q69,67 55,71" fill="#ede0d0" opacity="0.88"/>
-        <path d="M55,63 Q43,59 38,53 Q44,57 55,61" fill="#e8d8c5" opacity="0.85"/>
-        <path d="M55,63 Q67,59 72,53 Q66,57 55,61" fill="#e8d8c5" opacity="0.85"/>
-        <path d="M55,52 Q46,49 43,44 Q47,48 55,50" fill="#e3d0bb" opacity="0.8"/>
-        <path d="M55,52 Q64,49 67,44 Q63,48 55,50" fill="#e3d0bb" opacity="0.8"/>
-        <path d="M55,30 Q50,24 48,28 Q48,32 55,37 Q62,32 62,28 Q60,24 55,30Z" fill="#f0e6d6" opacity="0.9"/>
+        <circle id="result-overflow-flood" cx="55" cy="55" r="0" fill="rgba(240,230,214,0.6)" opacity="0"/>
+        <g id="result-lotus-art" transform="translate(55,55) scale(0.15) translate(-256,-256)" fill="#f0e6d6">
+          <path d="M266.99,109.868c-6.283-5.511-15.696-5.511-21.979,0c-3.022,2.641-74.078,65.713-74.078,146.133s71.056,143.491,74.078,146.133c3.141,2.756,7.066,4.131,10.989,4.131s7.848-1.375,10.989-4.131c3.022-2.641,74.078-65.713,74.078-146.133S270.011,112.51,266.99,109.868z" opacity="0.92"/>
+          <path d="M466.187,199.603c-0.489-8.495-7.283-15.267-15.772-15.729c-2.314-0.098-42.609-1.937-86.52,11.643c6.377,18.6,10.563,38.864,10.563,60.484c0,63.348-34.941,115.647-60.36,145.357c31.604-5.956,69.817-18.946,98.731-47.193C471.003,297.354,466.405,203.57,466.187,199.603z" opacity="0.85"/>
+          <path d="M137.542,256.001c0-21.623,4.187-41.887,10.565-60.49c-43.908-13.585-84.202-11.749-86.523-11.636c-8.489,0.462-15.282,7.234-15.772,15.729c-0.217,3.967-4.815,97.751,53.359,154.562c28.917,28.243,67.126,41.233,98.725,47.19C172.49,371.659,137.542,319.355,137.542,256.001z" opacity="0.85"/>
+          <path d="M50.173,346.282c-26.719,14.308-43.764,30.045-44.883,31.09c-7.053,6.587-7.053,17.802,0,24.392c2.381,2.228,59.207,54.588,131.056,54.588c28.955,0,55.379-8.535,76.875-18.834C146.461,429.771,86.645,402.72,50.173,346.282z" opacity="0.8"/>
+          <path d="M506.71,377.372c-1.119-1.044-18.164-16.779-44.881-31.088c-36.475,56.45-96.296,83.488-163.049,91.234c21.494,10.298,47.918,18.833,76.873,18.833c71.849,0,128.675-52.359,131.056-54.588C513.764,395.176,513.764,383.96,506.71,377.372z" opacity="0.8"/>
+          <path d="M256.019,451.981c-11.493,7.317-25.462,14.964-41.429,21.508c15.773,8.381,31.014,13.72,36.203,15.423c3.341,1.092,6.971,1.125,10.413,0c5.189-1.703,20.431-7.041,36.203-15.423C281.487,466.961,267.51,459.27,256.019,451.981z" opacity="0.75"/>
+          <circle cx="161.393" cy="105.741" r="16.696" opacity="0.7"/>
+          <circle cx="356.179" cy="105.741" r="16.696" opacity="0.7"/>
+          <circle cx="256.004" cy="38.954" r="16.696" opacity="0.7"/>
+        </g>
       </g>
       <circle cx="55" cy="55" r="49" fill="none" stroke="#a89070" stroke-width="2.5" opacity="0.25"/>
     </svg>
+    </div>
 
-    <div id="result-time" class="result-time">0.00</div>
-    <div id="result-delta" class="result-delta">+0.00s</div>
-    <div id="result-grade" class="result-grade">—</div>
-    <div id="result-message" class="result-message"></div>
-
-    <div class="taopunk-divider"></div>
+    <!-- HUD score panel -->
+    <div class="hud-panel score-hud">
+      <div class="hud-panel-corner tl"></div>
+      <div class="hud-panel-corner tr"></div>
+      <div class="hud-panel-corner bl"></div>
+      <div class="hud-panel-corner br"></div>
+      <div class="hud-label" data-zh="计时" data-en="TIME">计时</div>
+      <div id="result-time" class="result-time">0.00</div>
+      <div id="result-delta" class="result-delta">+0.00s</div>
+      <div class="hud-divider"></div>
+      <div id="result-grade" class="result-grade">—</div>
+      <div id="result-message" class="result-message"></div>
+    </div>
 
     <!-- Leaderboard -->
     <div id="leaderboard-container"></div>
 
     <!-- Actions -->
     <div class="result-actions">
-      <button id="btn-again" class="btn btn-primary" data-zh="再来" data-en="Again">再来</button>
-      <a href="/" class="btn" data-zh="换游戏" data-en="Switch">换游戏</a>
+      <button id="btn-again" class="cyber-btn cyber-btn--primary" data-zh="再来" data-en="AGAIN">再来</button>
+      <button id="btn-download" class="cyber-btn cyber-btn--ghost btn-download" data-zh="保存" data-en="SAVE">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span data-zh="保存" data-en="SAVE">保存</span>
+      </button>
     </div>
   </div>
 

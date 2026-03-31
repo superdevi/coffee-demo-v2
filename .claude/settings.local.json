@@ -12,7 +12,8 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "WebFetch(domain:coffee-demo-v2.pages.dev)",
-      "Bash(git branch:*)"
+      "Bash(git branch:*)",
+      "Bash(find /c/Users/steff/Documents/GitHub/coffee-demo-v2 -maxdepth 2 -name *.png -o -name *.jpg -o -name *.svg -o -name *.webp -o -name *.pdf)"
     ]
   }
 }

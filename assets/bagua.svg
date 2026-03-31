@@ -1,0 +1,86 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <defs>
+    <style>
+      .line { stroke:#58e6da; stroke-width:6; stroke-linecap:round; }
+      .thin { stroke:#58e6da; stroke-width:2; opacity:0.6; }
+    </style>
+
+    <!-- trigram generator -->
+    <g id="solid">
+      <line class="line" x1="-40" y1="0" x2="40" y2="0"></line>
+    </g>
+
+    <g id="broken">
+      <line class="line" x1="-40" y1="0" x2="-10" y2="0"></line>
+      <line class="line" x1="10" y1="0" x2="40" y2="0"></line>
+    </g>
+
+    <!-- trigram definitions -->
+    <g id="qian"> <!-- ☰ -->
+      <use href="#solid" transform="translate(0,-20)"></use>
+      <use href="#solid"></use>
+      <use href="#solid" transform="translate(0,20)"></use>
+    </g>
+
+    <g id="dui"> <!-- ☱ -->
+      <use href="#broken" transform="translate(0,-20)"></use>
+      <use href="#solid"></use>
+      <use href="#solid" transform="translate(0,20)"></use>
+    </g>
+
+    <g id="li"> <!-- ☲ -->
+      <use href="#solid" transform="translate(0,-20)"></use>
+      <use href="#broken"></use>
+      <use href="#solid" transform="translate(0,20)"></use>
+    </g>
+
+    <g id="zhen"> <!-- ☳ -->
+      <use href="#solid" transform="translate(0,-20)"></use>
+      <use href="#solid"></use>
+      <use href="#broken" transform="translate(0,20)"></use>
+    </g>
+
+    <g id="xun"> <!-- ☴ -->
+      <use href="#broken" transform="translate(0,-20)"></use>
+      <use href="#solid"></use>
+      <use href="#broken" transform="translate(0,20)"></use>
+    </g>
+
+    <g id="kan"> <!-- ☵ -->
+      <use href="#broken" transform="translate(0,-20)"></use>
+      <use href="#solid"></use>
+      <use href="#broken" transform="translate(0,20)"></use>
+    </g>
+
+    <g id="gen"> <!-- ☶ -->
+      <use href="#solid" transform="translate(0,-20)"></use>
+      <use href="#broken"></use>
+      <use href="#broken" transform="translate(0,20)"></use>
+    </g>
+
+    <g id="kun"> <!-- ☷ -->
+      <use href="#broken" transform="translate(0,-20)"></use>
+      <use href="#broken"></use>
+      <use href="#broken" transform="translate(0,20)"></use>
+    </g>
+  </defs>
+
+  <!-- outer ring -->
+  <circle cx="512" cy="512" r="360" class="thin"></circle>
+  <circle cx="512" cy="512" r="300" class="thin"></circle>
+
+  <!-- trigram placement (Later Heaven) -->
+  <g transform="translate(512 512)">
+    <g transform="translate(0,-280)"><use href="#li"></use></g>        <!-- top -->
+    <g transform="translate(200,-200) rotate(45)"><use href="#kun"></use></g>
+    <g transform="translate(280,0) rotate(90)"><use href="#dui"></use></g>
+    <g transform="translate(200,200) rotate(135)"><use href="#qian"></use></g>
+    <g transform="translate(0,280) rotate(180)"><use href="#kan"></use></g>
+    <g transform="translate(-200,200) rotate(225)"><use href="#gen"></use></g>
+    <g transform="translate(-280,0) rotate(270)"><use href="#zhen"></use></g>
+    <g transform="translate(-200,-200) rotate(315)"><use href="#xun"></use></g>
+  </g>
+
+  <!-- inner empty ring -->
+  <circle cx="512" cy="512" r="160" class="thin"></circle>
+</svg>

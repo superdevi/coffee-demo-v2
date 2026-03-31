@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 280" fill="none">
+  <!-- Bottom-left corner — lush botanical frame (flipped TL vertically) -->
+
+  <!-- === BACK LAYER === -->
+  <path d="M-15,160 C5,180 30,210 55,230 C60,234 50,225 35,208 C20,190 0,168 -15,160Z" fill="#3D6B5E" opacity="0.85"/>
+  <path d="M-10,120 C15,145 45,180 75,205 C80,210 68,198 50,180 C30,158 5,130 -10,120Z" fill="#4A7D6A" opacity="0.8"/>
+  <path d="M30,280 C32,255 28,225 20,200 C18,194 22,208 26,225 C30,245 32,265 30,280Z" fill="#3D6B5E" opacity="0.75"/>
+  <path d="M-5,200 C12,215 35,238 58,252 C62,255 52,245 38,230 C22,212 5,200 -5,200Z" fill="#4A7D6A" opacity="0.8"/>
+  <path d="M60,280 C55,258 42,230 28,208 C25,203 32,215 42,232 C52,250 58,268 60,280Z" fill="#3D6B5E" opacity="0.7"/>
+
+  <!-- === MID LAYER === -->
+  <path d="M-8,180 C10,198 32,222 55,240 C58,242 48,232 35,218 C18,198 2,182 -8,180Z" fill="#5A9A8F" opacity="0.75"/>
+  <path d="M10,280 C15,260 15,232 10,208 C9,204 12,218 14,235 C16,252 14,270 10,280Z" fill="#6B9E8A" opacity="0.7"/>
+  <path d="M-12,140 C8,162 35,192 62,215 C66,218 55,208 40,192 C22,172 2,148 -12,140Z" fill="#5A9A8F" opacity="0.7"/>
+  <path d="M42,280 C40,262 32,238 22,220 C20,216 25,228 32,242 C38,258 42,272 42,280Z" fill="#6B9E8A" opacity="0.65"/>
+  <path d="M0,225 C15,238 35,255 52,265 C55,267 45,260 32,248 C18,235 5,225 0,225Z" fill="#5A9A8F" opacity="0.7"/>
+  <path d="M80,280 C72,262 55,240 38,225 C35,222 42,232 55,245 C68,260 78,275 80,280Z" fill="#6B9E8A" opacity="0.6"/>
+
+  <!-- === FRONT LAYER === -->
+  <path d="M0,210 C12,222 28,238 45,250 C48,252 40,245 28,232 C15,218 4,208 0,210Z" fill="#8BA8A0" opacity="0.7"/>
+  <path d="M20,280 C22,265 20,245 15,228 C14,225 16,238 18,250 C20,262 21,272 20,280Z" fill="#8BA8A0" opacity="0.65"/>
+  <path d="M-5,235 C8,245 22,258 35,266 C38,268 30,262 20,252 C10,242 0,234 -5,235Z" fill="#A8C4B8" opacity="0.55"/>
+
+  <!-- === FLOWER CLUSTERS === -->
+  <g transform="translate(35,245)">
+    <circle cx="0" cy="0" r="5" fill="#C47068" opacity="0.7"/>
+    <circle cx="-5" cy="4" r="4.5" fill="#D4887E" opacity="0.65"/>
+    <circle cx="5" cy="3" r="4" fill="#C47068" opacity="0.6"/>
+    <circle cx="-3" cy="-5" r="4.5" fill="#D4887E" opacity="0.55"/>
+    <circle cx="4" cy="-4" r="3.5" fill="#C47068" opacity="0.6"/>
+    <circle cx="0" cy="7" r="3.5" fill="#D4887E" opacity="0.5"/>
+    <circle cx="-7" cy="0" r="3" fill="#B5635A" opacity="0.55"/>
+    <circle cx="7" cy="0" r="3" fill="#D4887E" opacity="0.5"/>
+    <circle cx="0" cy="0" r="2" fill="#E8A8A0" opacity="0.5"/>
+  </g>
+
+  <g transform="translate(12,195)">
+    <circle cx="0" cy="0" r="4.5" fill="#C47068" opacity="0.65"/>
+    <circle cx="-4" cy="3" r="4" fill="#D4887E" opacity="0.6"/>
+    <circle cx="4" cy="2" r="3.5" fill="#C47068" opacity="0.55"/>
+    <circle cx="-2" cy="-4" r="4" fill="#D4887E" opacity="0.5"/>
+    <circle cx="3" cy="-3" r="3" fill="#B5635A" opacity="0.55"/>
+    <circle cx="0" cy="0" r="1.5" fill="#E8A8A0" opacity="0.45"/>
+  </g>
+
+  <g transform="translate(58,225)">
+    <circle cx="0" cy="0" r="4" fill="#C47068" opacity="0.6"/>
+    <circle cx="-4" cy="2" r="3.5" fill="#D4887E" opacity="0.55"/>
+    <circle cx="3" cy="3" r="3" fill="#C47068" opacity="0.5"/>
+    <circle cx="-2" cy="-3" r="3.5" fill="#D4887E" opacity="0.5"/>
+    <circle cx="4" cy="-2" r="3" fill="#B5635A" opacity="0.5"/>
+    <circle cx="0" cy="0" r="1.5" fill="#E8A8A0" opacity="0.4"/>
+  </g>
+
+  <g transform="translate(25,160)">
+    <circle cx="0" cy="0" r="4" fill="#C47068" opacity="0.55"/>
+    <circle cx="-3" cy="3" r="3.5" fill="#D4887E" opacity="0.5"/>
+    <circle cx="3" cy="2" r="3" fill="#C47068" opacity="0.45"/>
+    <circle cx="0" cy="-4" r="3.5" fill="#D4887E" opacity="0.45"/>
+    <circle cx="0" cy="0" r="1.2" fill="#E8A8A0" opacity="0.35"/>
+  </g>
+
+  <g transform="translate(70,260)">
+    <circle cx="0" cy="0" r="3.5" fill="#C47068" opacity="0.5"/>
+    <circle cx="-3" cy="2" r="3" fill="#D4887E" opacity="0.45"/>
+    <circle cx="3" cy="-2" r="2.5" fill="#B5635A" opacity="0.4"/>
+    <circle cx="0" cy="0" r="1.2" fill="#E8A8A0" opacity="0.35"/>
+  </g>
+
+  <circle cx="5" cy="220" r="3" fill="#C47068" opacity="0.4"/>
+  <circle cx="48" cy="272" r="2.5" fill="#D4887E" opacity="0.35"/>
+  <circle cx="82" cy="238" r="2.5" fill="#C47068" opacity="0.3"/>
+</svg>

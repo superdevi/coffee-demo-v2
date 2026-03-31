@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 280" fill="none">
+  <!-- Top-left corner — lush botanical frame, style-1 reference -->
+
+  <!-- === BACK LAYER: Large dark leaves === -->
+  <path d="M-15,120 C5,100 30,70 55,50 C60,46 50,55 35,72 C20,90 0,112 -15,120Z" fill="#3D6B5E" opacity="0.85"/>
+  <path d="M-10,160 C15,135 45,100 75,75 C80,70 68,82 50,100 C30,122 5,150 -10,160Z" fill="#4A7D6A" opacity="0.8"/>
+  <path d="M30,0 C32,25 28,55 20,80 C18,86 22,72 26,55 C30,35 32,15 30,0Z" fill="#3D6B5E" opacity="0.75"/>
+  <path d="M-5,80 C12,65 35,42 58,28 C62,25 52,35 38,50 C22,68 5,80 -5,80Z" fill="#4A7D6A" opacity="0.8"/>
+  <path d="M60,0 C55,22 42,50 28,72 C25,77 32,65 42,48 C52,30 58,12 60,0Z" fill="#3D6B5E" opacity="0.7"/>
+
+  <!-- === MID LAYER: Medium sage/teal leaves === -->
+  <path d="M-8,100 C10,82 32,58 55,40 C58,38 48,48 35,62 C18,82 2,98 -8,100Z" fill="#5A9A8F" opacity="0.75"/>
+  <path d="M10,0 C15,20 15,48 10,72 C9,76 12,62 14,45 C16,28 14,10 10,0Z" fill="#6B9E8A" opacity="0.7"/>
+  <path d="M-12,140 C8,118 35,88 62,65 C66,62 55,72 40,88 C22,108 2,132 -12,140Z" fill="#5A9A8F" opacity="0.7"/>
+  <path d="M42,0 C40,18 32,42 22,60 C20,64 25,52 32,38 C38,22 42,8 42,0Z" fill="#6B9E8A" opacity="0.65"/>
+  <path d="M0,55 C15,42 35,25 52,15 C55,13 45,20 32,32 C18,45 5,55 0,55Z" fill="#5A9A8F" opacity="0.7"/>
+  <path d="M80,0 C72,18 55,40 38,55 C35,58 42,48 55,35 C68,20 78,5 80,0Z" fill="#6B9E8A" opacity="0.6"/>
+
+  <!-- === FRONT LAYER: Light leaves === -->
+  <path d="M0,70 C12,58 28,42 45,30 C48,28 40,35 28,48 C15,62 4,72 0,70Z" fill="#8BA8A0" opacity="0.7"/>
+  <path d="M20,0 C22,15 20,35 15,52 C14,55 16,42 18,30 C20,18 21,8 20,0Z" fill="#8BA8A0" opacity="0.65"/>
+  <path d="M-5,45 C8,35 22,22 35,14 C38,12 30,18 20,28 C10,38 0,46 -5,45Z" fill="#A8C4B8" opacity="0.55"/>
+  <path d="M50,0 C48,12 40,28 30,40 C28,43 34,35 40,25 C46,14 50,5 50,0Z" fill="#A8C4B8" opacity="0.5"/>
+
+  <!-- === FLOWER CLUSTERS === -->
+  <!-- Cluster 1: main (upper area) -->
+  <g transform="translate(35,35)">
+    <circle cx="0" cy="0" r="5" fill="#C47068" opacity="0.7"/>
+    <circle cx="-5" cy="-4" r="4.5" fill="#D4887E" opacity="0.65"/>
+    <circle cx="5" cy="-3" r="4" fill="#C47068" opacity="0.6"/>
+    <circle cx="-3" cy="5" r="4.5" fill="#D4887E" opacity="0.55"/>
+    <circle cx="4" cy="4" r="3.5" fill="#C47068" opacity="0.6"/>
+    <circle cx="0" cy="-7" r="3.5" fill="#D4887E" opacity="0.5"/>
+    <circle cx="-7" cy="0" r="3" fill="#B5635A" opacity="0.55"/>
+    <circle cx="7" cy="0" r="3" fill="#D4887E" opacity="0.5"/>
+    <!-- Petals detail -->
+    <circle cx="0" cy="0" r="2" fill="#E8A8A0" opacity="0.5"/>
+    <circle cx="-5" cy="-4" r="1.5" fill="#E8A8A0" opacity="0.4"/>
+    <circle cx="5" cy="-3" r="1.5" fill="#E8A8A0" opacity="0.4"/>
+  </g>
+
+  <!-- Cluster 2: left side -->
+  <g transform="translate(12,85)">
+    <circle cx="0" cy="0" r="4.5" fill="#C47068" opacity="0.65"/>
+    <circle cx="-4" cy="-3" r="4" fill="#D4887E" opacity="0.6"/>
+    <circle cx="4" cy="-2" r="3.5" fill="#C47068" opacity="0.55"/>
+    <circle cx="-2" cy="4" r="4" fill="#D4887E" opacity="0.5"/>
+    <circle cx="3" cy="3" r="3" fill="#B5635A" opacity="0.55"/>
+    <circle cx="-5" cy="2" r="3" fill="#D4887E" opacity="0.45"/>
+    <circle cx="0" cy="-6" r="3" fill="#C47068" opacity="0.5"/>
+    <circle cx="0" cy="0" r="1.5" fill="#E8A8A0" opacity="0.45"/>
+  </g>
+
+  <!-- Cluster 3: scattered singles -->
+  <g transform="translate(58,55)">
+    <circle cx="0" cy="0" r="4" fill="#C47068" opacity="0.6"/>
+    <circle cx="-4" cy="-2" r="3.5" fill="#D4887E" opacity="0.55"/>
+    <circle cx="3" cy="-3" r="3" fill="#C47068" opacity="0.5"/>
+    <circle cx="-2" cy="3" r="3.5" fill="#D4887E" opacity="0.5"/>
+    <circle cx="4" cy="2" r="3" fill="#B5635A" opacity="0.5"/>
+    <circle cx="0" cy="0" r="1.5" fill="#E8A8A0" opacity="0.4"/>
+  </g>
+
+  <!-- Cluster 4: bottom edge -->
+  <g transform="translate(25,120)">
+    <circle cx="0" cy="0" r="4" fill="#C47068" opacity="0.55"/>
+    <circle cx="-3" cy="-3" r="3.5" fill="#D4887E" opacity="0.5"/>
+    <circle cx="3" cy="-2" r="3" fill="#C47068" opacity="0.45"/>
+    <circle cx="0" cy="4" r="3.5" fill="#D4887E" opacity="0.45"/>
+    <circle cx="-4" cy="2" r="3" fill="#B5635A" opacity="0.45"/>
+    <circle cx="0" cy="0" r="1.2" fill="#E8A8A0" opacity="0.35"/>
+  </g>
+
+  <!-- Cluster 5: top scattered -->
+  <g transform="translate(70,20)">
+    <circle cx="0" cy="0" r="3.5" fill="#C47068" opacity="0.5"/>
+    <circle cx="-3" cy="-2" r="3" fill="#D4887E" opacity="0.45"/>
+    <circle cx="3" cy="2" r="2.5" fill="#B5635A" opacity="0.4"/>
+    <circle cx="0" cy="0" r="1.2" fill="#E8A8A0" opacity="0.35"/>
+  </g>
+
+  <!-- Scattered individual petals -->
+  <circle cx="5" cy="60" r="3" fill="#C47068" opacity="0.4"/>
+  <circle cx="48" cy="8" r="2.5" fill="#D4887E" opacity="0.35"/>
+  <circle cx="82" cy="42" r="2.5" fill="#C47068" opacity="0.3"/>
+  <circle cx="15" cy="145" r="2.5" fill="#D4887E" opacity="0.3"/>
+
+  <!-- Leaf veins -->
+  <path d="M-8,100 L55,40" stroke="#3D6B5E" stroke-width="0.5" opacity="0.2"/>
+  <path d="M-12,140 L62,65" stroke="#3D6B5E" stroke-width="0.5" opacity="0.15"/>
+  <path d="M0,55 L52,15" stroke="#4A7D6A" stroke-width="0.4" opacity="0.15"/>
+</svg>

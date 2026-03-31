@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 160" fill="none">
+  <!-- Modular milk jug / pitcher. Swap this file to change pour vessel. -->
+  <!-- Palette: stone #E2DBD2, clay #C4B5A5, driftwood #8A7D72, charcoal #3A3632 -->
+
+  <!-- Jug body -->
+  <path d="M30,55 C28,55 22,60 20,75 C18,95 20,120 25,135 C30,145 40,150 60,150 C80,150 90,145 95,135 C100,120 102,95 100,75 C98,60 92,55 90,55Z"
+        fill="#E2DBD2" stroke="#C4B5A5" stroke-width="1.5"/>
+
+  <!-- Jug highlight (reflection) -->
+  <path d="M35,65 C34,70 33,90 35,110 C36,115 38,118 40,118"
+        stroke="white" stroke-width="2" opacity="0.25" stroke-linecap="round" fill="none"/>
+
+  <!-- Spout -->
+  <path d="M30,55 C28,48 20,38 12,30 C14,28 18,28 22,30 C26,34 30,45 32,52"
+        fill="#E2DBD2" stroke="#C4B5A5" stroke-width="1.5"/>
+
+  <!-- Spout inner shadow -->
+  <path d="M26,48 C24,42 20,36 16,32"
+        stroke="#C4B5A5" stroke-width="0.8" opacity="0.4" fill="none"/>
+
+  <!-- Handle -->
+  <path d="M90,60 C100,58 108,65 110,80 C112,95 108,110 100,120 C96,124 92,122 90,118"
+        stroke="#C4B5A5" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+  <!-- Handle highlight -->
+  <path d="M94,65 C102,64 106,70 108,82"
+        stroke="white" stroke-width="1" opacity="0.2" stroke-linecap="round" fill="none"/>
+
+  <!-- Rim -->
+  <ellipse cx="60" cy="55" rx="30" ry="6" fill="#E2DBD2" stroke="#C4B5A5" stroke-width="1.2"/>
+
+  <!-- Milk surface -->
+  <ellipse cx="60" cy="55" rx="26" ry="4.5" fill="white" opacity="0.6"/>
+
+  <!-- Rim highlight -->
+  <path d="M38,52 C45,49 55,48 70,49" stroke="white" stroke-width="0.8" opacity="0.3" fill="none"/>
+
+  <!-- Subtle shadow at base -->
+  <ellipse cx="60" cy="150" rx="28" ry="3" fill="#8A7D72" opacity="0.08"/>
+</svg>

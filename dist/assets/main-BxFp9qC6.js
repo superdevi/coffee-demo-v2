@@ -1,1 +1,0 @@
-import{n as e}from"./i18n-DGmuMSFG.js";import{i as t,n,r,t as i}from"./utils-CBdnpe-u.js";var a=document.getElementById(`nickname`),o=document.getElementById(`company`);a.value=n(),o.value=i(),a.addEventListener(`input`,()=>t(a.value)),o.addEventListener(`input`,()=>r(o.value)),e();

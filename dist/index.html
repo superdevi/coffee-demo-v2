@@ -3,217 +3,264 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#0a0a0f">
-  <title>8.88 · Super Devi Coffee Games</title>
+  <meta name="theme-color" content="#231a14">
+  <title>8.88 · SUPER DEVI</title>
   <style>
     .home {
-      padding: var(--space-xl) var(--space-lg);
-      gap: var(--space-lg);
+      padding: 0;
+      gap: 0;
       min-height: 100vh;
       min-height: 100dvh;
-      justify-content: flex-start;
-      padding-top: 15vh;
+      justify-content: center;
+      background:
+        linear-gradient(180deg, rgba(18,12,8,0.65) 0%, rgba(18,12,8,0.45) 40%, rgba(18,12,8,0.45) 60%, rgba(18,12,8,0.65) 100%),
+        url('/assets/wooden-BFmWdFg-.png') center center / cover;
+      background-color: var(--wood-base);
     }
 
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    /* Frosted dark panel over Three.js canvas */
+    .content-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 380px;
+      padding: var(--space-2xl) var(--space-xl);
+      background: rgba(10, 8, 6, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-left: 1px solid rgba(45, 212, 168, 0.06);
+      border-right: 1px solid rgba(45, 212, 168, 0.06);
+      position: relative;
+      z-index: 3;
+      min-height: 100vh;
+      min-height: 100dvh;
+      justify-content: center;
+    }
+
+    /* Cyberpunk accent glow on panel edges */
+    .content-panel::before,
+    .content-panel::after {
+      content: '';
+      position: absolute;
+      top: 12%;
+      bottom: 12%;
+      width: 1px;
+      background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(45, 212, 168, 0.12) 30%,
+        rgba(45, 212, 168, 0.25) 50%,
+        rgba(45, 212, 168, 0.12) 70%,
+        transparent
+      );
+    }
+
+    .content-panel::before { left: 0; }
+    .content-panel::after { right: 0; }
+
+    /* --- Brand --- */
     .brand {
       text-align: center;
+      margin-bottom: var(--space-xl);
     }
 
     .brand-number {
       font-family: var(--font-mono);
-      font-size: 3.5rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--gold), var(--jade));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 3rem;
+      font-weight: 200;
+      color: var(--text-primary);
       line-height: 1;
+      letter-spacing: 0.1em;
+      text-shadow: 0 0 30px rgba(232, 201, 160, 0.15);
     }
 
-    .brand-name {
-      font-family: var(--font-display);
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      letter-spacing: 0.15em;
-      margin-top: var(--space-sm);
+    .brand-sub {
+      font-size: 0.5rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 0.4em;
+      margin-top: 14px;
     }
 
-    .player-info {
+    /* --- Player HUD panel --- */
+    .player-hud {
+      max-width: 320px;
+      padding: var(--space-lg);
+      gap: var(--space-md);
+    }
+
+    .player-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      width: 100%;
+    }
+
+    .kawaii {
+      width: 56px;
+      height: 56px;
+      flex-shrink: 0;
+      animation: kawaii-float 4s ease-in-out infinite;
+      filter: drop-shadow(0 4px 12px rgba(45, 212, 168, 0.1));
+    }
+
+    @keyframes kawaii-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .player-fields {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field .input {
+      font-size: 0.75rem;
+      padding: 10px 14px;
+      letter-spacing: 0.12em;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(45, 212, 168, 0.12);
+      box-shadow: inset 0 0 12px rgba(45, 212, 168, 0.03), 0 0 8px rgba(0, 0, 0, 0.3);
+      color: var(--neon);
+    }
+
+    .field .input:focus {
+      border-color: rgba(45, 212, 168, 0.4);
+      box-shadow: inset 0 0 16px rgba(45, 212, 168, 0.06), 0 0 16px rgba(45, 212, 168, 0.1), var(--glow-neon);
+      color: var(--neon);
+      text-shadow: 0 0 8px rgba(45, 212, 168, 0.3);
+    }
+
+    .field .input::placeholder {
+      color: rgba(45, 212, 168, 0.2);
+    }
+
+    /* --- Action buttons --- */
+    .home-actions {
+      margin-top: var(--space-xl);
+      width: 100%;
+      max-width: 320px;
       display: flex;
       flex-direction: column;
       gap: var(--space-sm);
-      width: 100%;
-      max-width: 320px;
     }
 
-    .player-info .input {
-      width: 100%;
-      text-align: center;
-      font-size: 0.9rem;
-      padding: var(--space-sm) var(--space-md);
-      box-sizing: border-box;
+    .home-actions .cyber-btn {
+      padding: 16px;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
     }
 
-    .games-grid {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-md);
-      width: 100%;
-      max-width: 320px;
-    }
-
-    .game-card {
-      display: flex;
-      align-items: center;
-      gap: var(--space-md);
-      padding: var(--space-lg);
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .game-icon {
-      font-size: 2rem;
-      width: 56px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: var(--radius-md);
-      flex-shrink: 0;
-    }
-
-    .game-info {
-      flex: 1;
-    }
-
-    .game-title {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-
-    .game-subtitle {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-    }
-
-    .game-arrow {
-      color: var(--text-secondary);
-      font-size: 1.2rem;
-    }
-
-    .game-card:nth-child(1) .game-icon { color: var(--gold); }
-    .game-card:nth-child(2) .game-icon { color: var(--neon-pink); }
-    .game-card:nth-child(3) .game-icon { color: var(--neon-cyan); }
-
-    .footer {
-      margin-top: auto;
-      padding-top: var(--space-xl);
-      text-align: center;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      opacity: 0.5;
-    }
-
-    /* Taopunk cloud decoration */
-    .clouds {
+    /* --- Leaderboard overlay --- */
+    .lb-overlay {
       position: fixed;
       inset: 0;
+      z-index: 900;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-xl);
+      animation: fadeIn var(--duration-fast) ease-out;
+    }
+
+    .lb-overlay .lb-close {
+      margin-top: var(--space-lg);
+    }
+
+    /* --- Footer --- */
+    .footer {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 0.4rem;
+      font-weight: 200;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
       pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .cloud {
-      position: absolute;
-      width: 200px;
-      height: 100px;
-      background: radial-gradient(ellipse, rgba(45, 212, 168, 0.03) 0%, transparent 70%);
-      border-radius: 50%;
-      animation: drift 30s infinite ease-in-out;
-    }
-
-    .cloud:nth-child(1) { top: 10%; left: -10%; animation-delay: 0s; }
-    .cloud:nth-child(2) { top: 60%; right: -10%; animation-delay: -10s; animation-duration: 25s; }
-    .cloud:nth-child(3) { bottom: 10%; left: 30%; animation-delay: -20s; animation-duration: 35s; }
-
-    @keyframes drift {
-      0%, 100% { transform: translateX(0) translateY(0); }
-      50% { transform: translateX(30px) translateY(-15px); }
+      z-index: 1;
     }
   </style>
-  <script type="module" crossorigin src="/assets/main-BxFp9qC6.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/i18n-DGmuMSFG.js">
-  <link rel="modulepreload" crossorigin href="/assets/utils-CBdnpe-u.js">
-  <link rel="stylesheet" crossorigin href="/assets/i18n-BG_Cl_Wu.css">
+  <script type="module" crossorigin src="/assets/main-DUMQsL64.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/i18n-CYArclXf.js">
+  <link rel="modulepreload" crossorigin href="/assets/leaderboard-BcnF99tr.js">
+  <link rel="stylesheet" crossorigin href="/assets/i18n-B9QKkimO.css">
 </head>
 <body>
-  <div class="clouds">
-    <div class="cloud"></div>
-    <div class="cloud"></div>
-    <div class="cloud"></div>
-  </div>
-
+  <canvas id="bg-canvas"></canvas>
   <div class="screen home">
-    <div class="brand">
-      <div class="brand-number">8.88</div>
-      <div class="brand-name">SUPER DEVI</div>
-    </div>
+    <div class="content-panel">
+      <div class="brand">
+        <div class="brand-number">8.88</div>
+        <div class="brand-sub">SUPER DEVI COFFEE</div>
+      </div>
 
-    <div class="taopunk-divider"></div>
+      <div class="hud-divider"></div>
 
-    <div class="player-info">
-      <input
-        class="input"
-        type="text"
-        id="nickname"
-        data-zh-placeholder="输入昵称"
-        data-en-placeholder="Enter nickname"
-        autocomplete="off"
-      >
-      <input
-        class="input"
-        type="text"
-        id="company"
-        data-zh-placeholder="公司名称"
-        data-en-placeholder="Company"
-        autocomplete="off"
-      >
-    </div>
-
-    <div class="games-grid">
-      <a href="/games/latte-art/" class="card game-card">
-        <div class="game-icon">☕</div>
-        <div class="game-info">
-          <div class="game-title" data-zh="拉花" data-en="Latte Art">拉花</div>
-          <div class="game-subtitle" data-zh="按住倒奶 — 停在 8.88 秒" data-en="Hold to pour — release at 8.88s">按住倒奶 — 停在 8.88 秒</div>
+      <div class="hud-panel player-hud">
+        <div class="hud-panel-corner tl"></div>
+        <div class="hud-panel-corner tr"></div>
+        <div class="hud-panel-corner bl"></div>
+        <div class="hud-panel-corner br"></div>
+        <div class="hud-label" data-zh="玩家" data-en="PLAYER">玩家</div>
+        <div class="player-row">
+          <img class="kawaii" src="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%20fill='none'%3e%3c!--%20Kawaii%20round%20coffee%20bean%20character%20—%20swap%20this%20file%20to%20change%20mascot%20--%3e%3c!--%20Body%20(soft%20round)%20--%3e%3cellipse%20cx='50'%20cy='54'%20rx='30'%20ry='32'%20fill='%23DBA882'/%3e%3c!--%20Body%20highlight%20--%3e%3cellipse%20cx='42'%20cy='42'%20rx='14'%20ry='16'%20fill='%23E8CDB0'%20opacity='0.5'/%3e%3c!--%20Coffee%20bean%20line%20--%3e%3cpath%20d='M50,28%20C44,40%2044,60%2050,76'%20stroke='%23B5635A'%20stroke-width='2'%20opacity='0.3'%20fill='none'%20stroke-linecap='round'/%3e%3c!--%20Eyes%20(closed,%20happy)%20--%3e%3cpath%20d='M38,50%20C39,47%2042,47%2043,50'%20stroke='%234A6B6F'%20stroke-width='2'%20stroke-linecap='round'%20fill='none'/%3e%3cpath%20d='M57,50%20C58,47%2061,47%2062,50'%20stroke='%234A6B6F'%20stroke-width='2'%20stroke-linecap='round'%20fill='none'/%3e%3c!--%20Blush%20--%3e%3cellipse%20cx='35'%20cy='55'%20rx='5'%20ry='3'%20fill='%23B5635A'%20opacity='0.2'/%3e%3cellipse%20cx='65'%20cy='55'%20rx='5'%20ry='3'%20fill='%23B5635A'%20opacity='0.2'/%3e%3c!--%20Tiny%20mouth%20--%3e%3cellipse%20cx='50'%20cy='58'%20rx='2.5'%20ry='1.5'%20fill='%234A6B6F'%20opacity='0.4'/%3e%3c!--%20Steam%20wisps%20above%20head%20--%3e%3cpath%20d='M42,20%20C40,14%2044,10%2042,4'%20stroke='%238BA8A0'%20stroke-width='1'%20opacity='0.3'%20fill='none'%20stroke-linecap='round'/%3e%3cpath%20d='M50,18%20C48,12%2052,8%2050,2'%20stroke='%238BA8A0'%20stroke-width='1'%20opacity='0.25'%20fill='none'%20stroke-linecap='round'/%3e%3cpath%20d='M58,20%20C56,14%2060,10%2058,4'%20stroke='%238BA8A0'%20stroke-width='1'%20opacity='0.2'%20fill='none'%20stroke-linecap='round'/%3e%3c/svg%3e" alt="" draggable="false">
+          <div class="player-fields">
+            <div class="field">
+              <input
+                class="input"
+                type="text"
+                id="nickname"
+                data-zh-placeholder="输入昵称"
+                data-en-placeholder="NICKNAME"
+                autocomplete="off"
+              >
+            </div>
+            <div class="field">
+              <input
+                class="input"
+                type="text"
+                id="company"
+                data-zh-placeholder="公司名称"
+                data-en-placeholder="COMPANY"
+                autocomplete="off"
+              >
+            </div>
+          </div>
         </div>
-        <div class="game-arrow">→</div>
-      </a>
+      </div>
 
-      <a href="/games/tap-tap/" class="card game-card">
-        <div class="game-icon">🎯</div>
-        <div class="game-info">
-          <div class="game-title" data-zh="弹弹杯" data-en="Tap-Tap">弹弹杯</div>
-          <div class="game-subtitle" data-zh="点击得分 — 保持连击" data-en="Tap to score — keep the streak">点击得分 — 保持连击</div>
-        </div>
-        <div class="game-arrow">→</div>
-      </a>
-
-      <a href="/games/cup-stack/" class="card game-card">
-        <div class="game-icon">🏗️</div>
-        <div class="game-info">
-          <div class="game-title" data-zh="叠杯" data-en="Cup Stack">叠杯</div>
-          <div class="game-subtitle" data-zh="叠杯子 — 别掉了" data-en="Stack cups — don't miss">叠杯子 — 别掉了</div>
-        </div>
-        <div class="game-arrow">→</div>
-      </a>
+      <div class="home-actions">
+        <a href="/games/latte-art/" class="cyber-btn cyber-btn--primary" data-zh="开始拉花" data-en="BEGIN LATTE ART">开始拉花</a>
+        <button class="cyber-btn cyber-btn--ghost" id="lb-open" data-zh="排行榜" data-en="LEADERBOARD">排行榜</button>
+      </div>
     </div>
-
-    <div class="footer" data-zh="SUPER DEVI · 为出海企业打造视觉体验" data-en="SUPER DEVI · Visual experiences for companies going global">SUPER DEVI · 为出海企业打造视觉体验</div>
   </div>
+
+  <div class="footer" data-zh="SUPER DEVI · 为出海企业打造视觉体验" data-en="SUPER DEVI · VISUAL EXPERIENCES FOR COMPANIES GOING GLOBAL">SUPER DEVI · 为出海企业打造视觉体验</div>
 
 </body>
 </html>

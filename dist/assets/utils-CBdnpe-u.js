@@ -1,1 +1,0 @@
-function e(){return localStorage.getItem(`coffee_nickname`)||``}function t(e){localStorage.setItem(`coffee_nickname`,e.trim())}function n(){return localStorage.getItem(`coffee_company`)||``}function r(e){localStorage.setItem(`coffee_company`,e.trim())}export{t as i,e as n,r,n as t};
