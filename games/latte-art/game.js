@@ -15,10 +15,21 @@ const TARGET = 8.88
 const MAX_TIME = 12
 const GRADES = [
   { maxDelta: 0.01, cn: '封神!', en: 'GODLIKE!', cls: 'master', messagesZh: ['你是开挂的吧?!', '离谱 直接封神'], messagesEn: ['Are you cheating?!', 'Absolutely godlike'] },
-  { maxDelta: 0.10, cn: '精准降落', en: 'INSANE!', cls: 'precision', messagesZh: ['这也太稳了8', '丝滑得不像话'], messagesEn: ['Way too clean', 'Impossibly smooth'] },
-  { maxDelta: 0.30, cn: '666', en: 'SICK!', cls: 'beautiful', messagesZh: ['有点东西哦', '就差亿点点!'], messagesEn: ['You got this!', 'Just a tiny bit off!'] },
-  { maxDelta: 1.00, cn: '差点意思', en: 'Almost!', cls: 'notbad', messagesZh: ['要不再冲一把?', '感觉快了 冲!'], messagesEn: ['One more try?', 'Almost there, go!'] },
-  { maxDelta: Infinity, cn: '翻车了', en: 'Oops!', cls: 'tryagain', messagesZh: ['手滑了哈哈哈', '没事 再来!'], messagesEn: ['Butterfingers lol', 'No worries, again!'] },
+  { maxDelta: 0.05, cn: '精准降落', en: 'INSANE!', cls: 'precision', messagesZh: ['这也太稳了', '丝滑得不像话'], messagesEn: ['Way too clean', 'Impossibly smooth'] },
+  { maxDelta: 0.15, cn: '太强了', en: 'SICK!', cls: 'beautiful', messagesZh: ['就差亿点点!', '这手感绝了'], messagesEn: ['Just a hair off!', 'Incredible feel'] },
+  { maxDelta: 0.40, cn: '666', en: 'Nice!', cls: 'beautiful', messagesZh: ['有点东西哦', '稳住 下把封神'], messagesEn: ['You got this!', 'Next one is the one'] },
+  { maxDelta: 0.80, cn: '差点意思', en: 'Almost!', cls: 'notbad',
+    overZh: ['奶多了一点点', '再冲一把?'], underZh: ['再大胆一点!', '感觉快了 冲!'],
+    overEn: ['A bit too much milk', 'One more try?'], underEn: ['Be braver!', 'Almost there!'] },
+  { maxDelta: 1.50, cn: '翻车了', en: 'Oops!', cls: 'tryagain',
+    overZh: ['做成卡布奇诺了', '奶倒太多 拉花都没了'], underZh: ['太早松手了吧', '咖啡还没准备好呢'],
+    overEn: ['Made a cappuccino instead', 'Too much milk'], underEn: ['Let go too early', 'Coffee wasn\'t ready yet'] },
+  { maxDelta: 3.00, cn: '离谱', en: 'Bruh', cls: 'tryagain',
+    overZh: ['这是在做牛奶吧', '咖啡说：我呢?'], underZh: ['就这? 还没开始呢', '杯子都没捂热'],
+    overEn: ['This is just milk now', 'Coffee says: where am I?'], underEn: ['That\'s it?', 'Cup isn\'t even warm'] },
+  { maxDelta: Infinity, cn: '???', en: '???', cls: 'tryagain',
+    overZh: ['你在干嘛...', '手粘住了?'], underZh: ['碰都没碰吧', '是不是走错片场了'],
+    overEn: ['What are you doing...', 'Finger stuck?'], underEn: ['Did you even try?', 'Wrong game?'] },
 ]
 
 // --- State ---
@@ -90,22 +101,22 @@ function initAdvancedLatteArt() {
 
     const tb = document.createElementNS(ns, "feTurbulence");
     tb.setAttribute("type", "fractalNoise");
-    tb.setAttribute("baseFrequency", "0.0015");
-    tb.setAttribute("numOctaves", "1");
+    tb.setAttribute("baseFrequency", "0.001");
+    tb.setAttribute("numOctaves", "2");
     tb.setAttribute("seed", "1");
     tb.setAttribute("result", "t");
 
     const dp = document.createElementNS(ns, "feDisplacementMap");
     dp.setAttribute("in", "SourceGraphic");
     dp.setAttribute("in2", "t");
-    dp.setAttribute("scale", "180");
+    dp.setAttribute("scale", "250");
     dp.setAttribute("result", "dp");
     dp.setAttribute("xChannelSelector", "R");
     dp.setAttribute("yChannelSelector", "G");
 
     const bl = document.createElementNS(ns, "feGaussianBlur");
     bl.setAttribute("in", "dp");
-    bl.setAttribute("stdDeviation", "1.5");
+    bl.setAttribute("stdDeviation", "2.5");
 
     f.appendChild(tb); f.appendChild(dp); f.appendChild(bl);
     defs.appendChild(f);
@@ -179,8 +190,8 @@ function setRevealProgress(progress, elapsed) {
       (progress - thresholds[g]) / (1 - thresholds[g])
     ));
 
-    gf.displacement.setAttribute("scale", String(180 * (1 - groupProgress)));
-    gf.blur.setAttribute("stdDeviation", String(1.5 * (1 - groupProgress)));
+    gf.displacement.setAttribute("scale", String(250 * (1 - groupProgress)));
+    gf.blur.setAttribute("stdDeviation", String(2.5 * (1 - groupProgress)));
   }
 
   // Update per-path masks and opacity
@@ -203,13 +214,13 @@ function setRevealProgress(progress, elapsed) {
 
   // Overflow distortion when past target — art warps and stays warped
   if (elapsed > TARGET) {
-    const overAmount = Math.min((elapsed - TARGET) / (MAX_TIME - TARGET), 1); // 0→1
-    cremaWhiten.setAttribute('opacity', String(Math.min(overAmount * 0.6, 0.55)));
-    overflowFlood.setAttribute('r', String(Math.min(40 + overAmount * 100, 108)));
-    overflowFlood.setAttribute('opacity', String(Math.min(overAmount * 0.8, 0.7)));
+    const overAmount = Math.min((elapsed - TARGET) / (10 - TARGET), 1); // 0→1, fully white by 10s
+    cremaWhiten.setAttribute('opacity', String(overAmount));
+    overflowFlood.setAttribute('r', String(Math.min(40 + overAmount * 68, 108)));
+    overflowFlood.setAttribute('opacity', String(overAmount));
 
-    // Fade the art when over-pouring — no skew/scale, just opacity + flood
-    lotusArt.setAttribute('opacity', String(1 - overAmount * 0.35));
+    // Fade the art when over-pouring — fully gone at max
+    lotusArt.setAttribute('opacity', String(1 - overAmount));
   } else {
     cremaWhiten.setAttribute('opacity', '0');
     overflowFlood.setAttribute('r', '0');
@@ -434,7 +445,14 @@ function renderResultText() {
   $('#result-time').textContent = elapsed.toFixed(2)
   $('#result-grade').textContent = locale === 'zh' ? grade.cn : grade.en
   $('#result-grade').className = `result-grade ${grade.cls}`
-  const msgs = locale === 'zh' ? grade.messagesZh : grade.messagesEn
+  const { sign } = state.lastResult
+  const over = sign === '+'
+  let msgs
+  if (grade.overZh) {
+    msgs = locale === 'zh' ? (over ? grade.overZh : grade.underZh) : (over ? grade.overEn : grade.underEn)
+  } else {
+    msgs = locale === 'zh' ? grade.messagesZh : grade.messagesEn
+  }
   $('#result-message').textContent = msgs[Math.floor(Math.random() * msgs.length)]
 }
 
