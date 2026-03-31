@@ -5,6 +5,7 @@
 
 let ctx = null
 let masterGain = null
+let unlocked = false
 
 function getCtx() {
   if (!ctx) {
@@ -13,7 +14,6 @@ function getCtx() {
     masterGain.gain.value = 0.3
     masterGain.connect(ctx.destination)
   }
-  if (ctx.state === 'suspended') ctx.resume()
   return ctx
 }
 
@@ -21,6 +21,27 @@ function dest() {
   getCtx()
   return masterGain
 }
+
+// iOS requires AudioContext to be resumed inside a user gesture.
+// We unlock on the first touch/click, then play a silent buffer to fully activate.
+function unlockAudio() {
+  if (unlocked) return
+  const c = getCtx()
+  if (c.state === 'suspended') {
+    c.resume()
+  }
+  // Play a silent buffer to fully unlock on iOS
+  const buf = c.createBuffer(1, 1, c.sampleRate)
+  const src = c.createBufferSource()
+  src.buffer = buf
+  src.connect(c.destination)
+  src.start(0)
+  unlocked = true
+}
+
+document.addEventListener('touchstart', unlockAudio, { once: false, passive: true })
+document.addEventListener('touchend', unlockAudio, { once: false, passive: true })
+document.addEventListener('pointerdown', unlockAudio, { passive: true })
 
 /**
  * Soft digital "drip" — plays on pour start
@@ -194,4 +215,49 @@ export function sfxWarning() {
   gain.connect(dest())
   osc.start(t)
   osc.stop(t + 0.1)
+}
+
+/**
+ * UI button click — soft digital tap
+ */
+export function sfxClick() {
+  const c = getCtx()
+  const t = c.currentTime
+
+  const osc = c.createOscillator()
+  const gain = c.createGain()
+  osc.type = 'sine'
+  osc.frequency.setValueAtTime(660, t)
+  osc.frequency.exponentialRampToValueAtTime(440, t + 0.04)
+  gain.gain.setValueAtTime(0.12, t)
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.06)
+
+  osc.connect(gain)
+  gain.connect(dest())
+  osc.start(t)
+  osc.stop(t + 0.07)
+}
+
+/**
+ * Keystroke — tiny high-pitched tick for typing
+ */
+export function sfxKeystroke() {
+  const c = getCtx()
+  const t = c.currentTime
+
+  // Randomize pitch slightly for each keystroke
+  const freq = 1200 + Math.random() * 400
+
+  const osc = c.createOscillator()
+  const gain = c.createGain()
+  osc.type = 'sine'
+  osc.frequency.setValueAtTime(freq, t)
+  osc.frequency.exponentialRampToValueAtTime(freq * 0.6, t + 0.025)
+  gain.gain.setValueAtTime(0.06, t)
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.03)
+
+  osc.connect(gain)
+  gain.connect(dest())
+  osc.start(t)
+  osc.stop(t + 0.04)
 }

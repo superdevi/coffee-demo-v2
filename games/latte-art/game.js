@@ -8,7 +8,7 @@ import { vibrateShort, vibrateMedium, vibrateHeavy, vibratePattern } from '/shar
 import { submitScore, fetchLeaderboard, renderLeaderboard } from '/shared/leaderboard.js'
 import { initLocale, getLocale } from '/shared/i18n.js'
 import { initFoliageBorder } from '/shared/foliage-border.js'
-import { sfxPourStart, sfxPourLoop, sfxTick, sfxHeartbeat, sfxRelease, sfxWarning } from '/shared/sfx.js'
+import { sfxPourStart, sfxPourLoop, sfxTick, sfxHeartbeat, sfxRelease, sfxWarning, sfxClick, sfxKeystroke } from '/shared/sfx.js'
 
 let foliage = null
 let stopPourLoop = null
@@ -81,7 +81,7 @@ const overflowRing = $('.overflow-ring')
 const bagua = $('.bagua')
 const bgGlow = $('.bg-glow')
 const pourBtn = $('.pour-btn')
-const pourHint = $('.pour-hint')
+const pourBtnLabel = $('.pour-btn-label')
 const milkGlow = $('#milk-glow')
 const lotusArt = $('#lotus-art')
 const overflowFlood = $('#overflow-flood')
@@ -352,11 +352,11 @@ function easeOutCubic(t) {
 }
 
 /**
- * Reveal curve — keeps lotus subtle until ~7s, then blooms rapidly toward 8.88s.
- * At t=0.5 (~4.4s) only ~10% revealed. At t=0.8 (~7.1s) ~35%. Fills at t=1.0.
+ * Reveal curve — art starts appearing around 1.5-2s, fills gradually toward 8.88s.
+ * At t=0.2 (~1.8s) ~8% revealed. At t=0.5 (~4.4s) ~35%. Fills at t=1.0.
  */
 function revealCurve(t) {
-  return Math.pow(t, 3.5)
+  return Math.pow(t, 1.8)
 }
 
 // --- Pour Start ---
@@ -370,7 +370,7 @@ function startPour() {
   steamContainer.classList.add('active')
   bagua.classList.add('pouring')
   pourBtn.classList.add('pressing')
-  pourHint.textContent = getLocale() === 'zh' ? '松开' : 'Release'
+  pourBtnLabel.innerHTML = getLocale() === 'zh' ? '松开<br>结束' : 'RELEASE<br>TO FINISH'
   vibrateMedium()
   sfxPourStart()
   stopPourLoop = sfxPourLoop()
@@ -462,7 +462,7 @@ function resetGame() {
   state.elapsed = 0
   setRevealProgress(0, 0)
   updateTimer(0)
-  pourHint.textContent = getLocale() === 'zh' ? '按住倒奶' : 'Hold to Pour'
+  pourBtnLabel.innerHTML = getLocale() === 'zh' ? '按住<br>倒奶' : 'HOLD TO<br>POUR'
   timerEl.classList.remove('warm', 'hot', 'target', 'danger')
   endGlow.classList.remove('active')
   gameScreen.classList.remove('result')
@@ -615,11 +615,29 @@ async function downloadWallpaper() {
   ctx.font = '200 14px Inter, sans-serif'
   ctx.fillText('8.88 · SUPER DEVI', cx, H - 50)
 
-  // Download
-  const link = document.createElement('a')
-  link.download = `latte-art-${Date.now()}.png`
-  link.href = canvas.toDataURL('image/png')
-  link.click()
+  // Save to album via Web Share API (mobile), fallback to download
+  const filename = `latte-art-${Date.now()}.png`
+  canvas.toBlob(async (blob) => {
+    if (navigator.share && navigator.canShare) {
+      const file = new File([blob], filename, { type: 'image/png' })
+      const shareData = { files: [file] }
+      if (navigator.canShare(shareData)) {
+        try {
+          await navigator.share(shareData)
+          return
+        } catch (e) {
+          // User cancelled or share failed — fall through to download
+        }
+      }
+    }
+    // Fallback: trigger download
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.download = filename
+    link.href = url
+    link.click()
+    URL.revokeObjectURL(url)
+  }, 'image/png')
 }
 
 // --- Free-Drag Physics ---
@@ -718,13 +736,35 @@ pourBtn.addEventListener('contextmenu', (e) => e.preventDefault())
 document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false })
 
 // Again button
-$('#btn-again').addEventListener('click', resetGame)
+$('#btn-again').addEventListener('click', () => { sfxClick(); resetGame() })
 
 // Download wallpaper button
-$('#btn-download').addEventListener('click', downloadWallpaper)
+$('#btn-download').addEventListener('click', () => { sfxClick(); downloadWallpaper() })
 
-// Init locale
+// Global: click sound on all buttons, keystroke on all text inputs
+document.addEventListener('pointerdown', (e) => {
+  const el = e.target.closest('button, a.cyber-btn, .corner-btn, .lb-panel-close')
+  if (el && el !== pourBtn) sfxClick()
+})
+document.addEventListener('input', (e) => {
+  if (e.target.matches('input[type="text"], input:not([type])')) sfxKeystroke()
+})
+
+// Init locale + username label
 initLocale()
+
+function updateUserPourLabel() {
+  const label = $('#user-pour-label')
+  if (!label) return
+  const name = getNickname()
+  const locale = getLocale()
+  if (name) {
+    label.textContent = locale === 'zh' ? `${name.toUpperCase()} 的拉花` : `${name.toUpperCase()}'S POUR`
+  } else {
+    label.textContent = locale === 'zh' ? '拉花挑战' : 'LATTE ART'
+  }
+}
+updateUserPourLabel()
 
 // Re-render result screen when locale toggles
 window.addEventListener('localechange', () => {
@@ -736,8 +776,9 @@ window.addEventListener('localechange', () => {
   }
   // Update pour hint if on idle screen
   if (state.phase === 'idle') {
-    pourHint.textContent = getLocale() === 'zh' ? '按住倒奶' : 'Hold to Pour'
+    pourBtnLabel.innerHTML = getLocale() === 'zh' ? '按住<br>倒奶' : 'HOLD TO<br>POUR'
   }
+  updateUserPourLabel()
 })
 
 // --- BG toggle button ---
@@ -746,6 +787,33 @@ if (bgToggle) {
   bgToggle.addEventListener('click', () => {
     const next = bgStyle === 1 ? 2 : 1
     applyBgStyle(next)
+  })
+}
+
+// --- User panel ---
+const userPanel = document.getElementById('user-panel')
+const userBtn = document.getElementById('user-btn')
+const panelNickname = document.getElementById('panel-nickname')
+const panelCompany = document.getElementById('panel-company')
+const panelClose = document.getElementById('user-panel-close')
+
+if (userBtn && userPanel) {
+  // Open
+  userBtn.addEventListener('click', () => {
+    panelNickname.value = getNickname()
+    panelCompany.value = getCompany()
+    userPanel.classList.add('open')
+    panelNickname.focus()
+  })
+
+  // Save on input
+  panelNickname.addEventListener('input', () => setNickname(panelNickname.value))
+  panelCompany.addEventListener('input', () => setCompany(panelCompany.value))
+
+  // Close
+  panelClose.addEventListener('click', () => userPanel.classList.remove('open'))
+  userPanel.addEventListener('click', (e) => {
+    if (e.target === userPanel) userPanel.classList.remove('open')
   })
 }
 

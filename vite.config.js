@@ -6,8 +6,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        latteArt: resolve(__dirname, 'games/latte-art/index.html'),
+        main: resolve(__dirname, 'games/latte-art/index.html'),
         tapTap: resolve(__dirname, 'games/tap-tap/index.html'),
         cupStack: resolve(__dirname, 'games/cup-stack/index.html'),
       },

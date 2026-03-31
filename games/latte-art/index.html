@@ -9,8 +9,29 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <a href="/" class="back-btn">←</a>
-  <button id="bg-toggle" class="bg-toggle-btn">BG 1</button>
+  <button id="user-btn" class="corner-btn corner-btn--tl">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  </button>
+  <button id="bg-toggle" class="corner-btn corner-btn--br">BG 1</button>
+
+  <!-- User panel overlay -->
+  <div id="user-panel" class="user-panel">
+    <div class="user-panel-content">
+      <div class="user-panel-title" data-zh="玩家信息" data-en="PLAYER INFO">玩家信息</div>
+      <div class="user-panel-field">
+        <label class="user-panel-label" data-zh="昵称" data-en="NICKNAME">昵称</label>
+        <input class="user-panel-input" type="text" id="panel-nickname" data-zh-placeholder="输入昵称" data-en-placeholder="NICKNAME" autocomplete="off">
+      </div>
+      <div class="user-panel-field">
+        <label class="user-panel-label" data-zh="公司" data-en="COMPANY">公司</label>
+        <input class="user-panel-input" type="text" id="panel-company" data-zh-placeholder="公司名称" data-en-placeholder="COMPANY" autocomplete="off">
+      </div>
+      <button id="user-panel-close" class="result-btn result-btn--replay" data-zh="完成" data-en="DONE">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span data-zh="完成" data-en="DONE">完成</span>
+      </button>
+    </div>
+  </div>
   <div class="bg-glow"></div>
   <div id="end-glow" class="end-glow"></div>
 
@@ -21,10 +42,13 @@
     <div class="bg-petals"></div>
     <canvas id="foliage-canvas"></canvas>
 
-    <!-- TOP SLOT: timer (game) / score panel (result) -->
+    <!-- TOP SLOT: username label + timer (game) / score panel (result) -->
     <div class="top-slot">
-      <!-- Game mode: timer -->
-      <div class="timer text-mono phase-game">0.00</div>
+      <!-- Game mode: username + timer -->
+      <div class="top-game phase-game">
+        <div id="user-pour-label" class="user-pour-label"></div>
+        <div class="timer text-mono">0.00</div>
+      </div>
 
       <!-- Result mode: minimal score -->
       <div class="result-top phase-result">
@@ -32,9 +56,6 @@
         <div id="result-grade" class="result-grade">—</div>
       </div>
     </div>
-
-    <!-- Pour hint floating above cup -->
-    <div class="pour-hint phase-game" data-zh="按住倒奶" data-en="Hold to Pour">按住倒奶</div>
 
     <!-- CENTER: Cup + Bagua (always visible) -->
     <div class="cup-container">
@@ -71,7 +92,9 @@
         <path class="milk-flow" d="M15,10 C13,25 10,35 8,50 C6,65 12,75 15,85 C18,75 24,65 22,50 C20,35 17,25 15,10Z" fill="white" opacity="0.85"/>
         <path class="milk-flow-highlight" d="M14,15 C13,28 11,40 10,55 C9,65 13,72 15,80" stroke="white" stroke-width="2" opacity="0.4" fill="none" stroke-linecap="round"/>
       </svg>
-      <button class="pour-btn phase-game" data-zh="倒奶" data-en="POUR">倒奶</button>
+      <button class="pour-btn phase-game">
+        <span class="pour-btn-label" data-zh="按住倒奶" data-en="HOLD TO POUR">按住倒奶</span>
+      </button>
 
       <!-- Steam -->
       <div class="steam-container">
@@ -136,10 +159,13 @@
       <div class="result-bottom phase-result">
         <div class="swipe-hint" data-zh="← 滑动查看排行榜" data-en="← SWIPE FOR LEADERBOARD">← 滑动查看排行榜</div>
         <div class="result-actions">
-          <button id="btn-again" class="cyber-btn cyber-btn--primary" data-zh="再来" data-en="AGAIN">再来</button>
-          <button id="btn-download" class="cyber-btn cyber-btn--ghost btn-download" data-zh="保存" data-en="SAVE">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            <span data-zh="保存" data-en="SAVE">保存</span>
+          <button id="btn-again" class="result-btn result-btn--replay" data-zh="再来" data-en="REPLAY">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            <span data-zh="再来" data-en="REPLAY">再来</span>
+          </button>
+          <button id="btn-download" class="result-btn result-btn--save" data-zh="保存到相册" data-en="SAVE TO ALBUM">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span data-zh="保存到相册" data-en="SAVE TO ALBUM">保存到相册</span>
           </button>
         </div>
       </div>
