@@ -7,6 +7,9 @@ import { getNickname, getCompany } from '/shared/utils.js'
 import { vibrateShort, vibrateMedium, vibrateHeavy, vibratePattern } from '/shared/haptics.js'
 import { submitScore, fetchLeaderboard, renderLeaderboard } from '/shared/leaderboard.js'
 import { initLocale, getLocale } from '/shared/i18n.js'
+import { initFoliageBorder } from '/shared/foliage-border.js'
+
+initFoliageBorder(document.getElementById('foliage-canvas'))
 
 const TARGET = 8.88
 const MAX_TIME = 12
