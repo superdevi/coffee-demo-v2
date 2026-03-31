@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>8.88 · Super Devi Coffee Games</title>
+  <style>
+    .home {
+      padding: var(--space-xl) var(--space-lg);
+      gap: var(--space-lg);
+      min-height: 100vh;
+      min-height: 100dvh;
+      justify-content: flex-start;
+      padding-top: 15vh;
+    }
+
+    .brand {
+      text-align: center;
+    }
+
+    .brand-number {
+      font-family: var(--font-mono);
+      font-size: 3.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--gold), var(--jade));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.15em;
+      margin-top: var(--space-sm);
+    }
+
+    .nickname-bar {
+      display: flex;
+      gap: var(--space-sm);
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .nickname-bar .input {
+      flex: 1;
+      text-align: center;
+      font-size: 0.9rem;
+      padding: var(--space-sm) var(--space-md);
+    }
+
+    .games-grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .game-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-lg);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .game-icon {
+      font-size: 2rem;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: var(--radius-md);
+      flex-shrink: 0;
+    }
+
+    .game-info {
+      flex: 1;
+    }
+
+    .game-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .game-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .game-arrow {
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+    }
+
+    .game-card:nth-child(1) .game-icon { color: var(--gold); }
+    .game-card:nth-child(2) .game-icon { color: var(--neon-pink); }
+    .game-card:nth-child(3) .game-icon { color: var(--neon-cyan); }
+
+    .footer {
+      margin-top: auto;
+      padding-top: var(--space-xl);
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      opacity: 0.5;
+    }
+
+    /* Taopunk cloud decoration */
+    .clouds {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .cloud {
+      position: absolute;
+      width: 200px;
+      height: 100px;
+      background: radial-gradient(ellipse, rgba(45, 212, 168, 0.03) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: drift 30s infinite ease-in-out;
+    }
+
+    .cloud:nth-child(1) { top: 10%; left: -10%; animation-delay: 0s; }
+    .cloud:nth-child(2) { top: 60%; right: -10%; animation-delay: -10s; animation-duration: 25s; }
+    .cloud:nth-child(3) { bottom: 10%; left: 30%; animation-delay: -20s; animation-duration: 35s; }
+
+    @keyframes drift {
+      0%, 100% { transform: translateX(0) translateY(0); }
+      50% { transform: translateX(30px) translateY(-15px); }
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/main-B-KBNY27.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/utils-swhUUEwV.js">
+  <link rel="stylesheet" crossorigin href="/assets/theme-CKHkBABd.css">
+</head>
+<body>
+  <div class="clouds">
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+  </div>
+
+  <div class="screen home">
+    <div class="brand">
+      <div class="brand-number">8.88</div>
+      <div class="brand-name">SUPER DEVI</div>
+    </div>
+
+    <div class="taopunk-divider"></div>
+
+    <div class="nickname-bar">
+      <input
+        class="input"
+        type="text"
+        id="nickname"
+        placeholder="输入昵称 · Enter nickname"
+        maxlength="8"
+        autocomplete="off"
+      >
+    </div>
+
+    <div class="games-grid">
+      <a href="/games/latte-art/" class="card game-card">
+        <div class="game-icon">☕</div>
+        <div class="game-info">
+          <div class="game-title">拉花 · Latte Art</div>
+          <div class="game-subtitle">Hold to pour — release at 8.88s</div>
+        </div>
+        <div class="game-arrow">→</div>
+      </a>
+
+      <a href="/games/tap-tap/" class="card game-card">
+        <div class="game-icon">🎯</div>
+        <div class="game-info">
+          <div class="game-title">弹弹杯 · Tap-Tap</div>
+          <div class="game-subtitle">Tap to score — keep the streak</div>
+        </div>
+        <div class="game-arrow">→</div>
+      </a>
+
+      <a href="/games/cup-stack/" class="card game-card">
+        <div class="game-icon">🏗️</div>
+        <div class="game-info">
+          <div class="game-title">叠杯 · Cup Stack</div>
+          <div class="game-subtitle">Stack cups — don't miss</div>
+        </div>
+        <div class="game-arrow">→</div>
+      </a>
+    </div>
+
+    <div class="footer">
+      SUPER DEVI · Visual experiences for companies going global
+    </div>
+  </div>
+
+</body>
+</html>
