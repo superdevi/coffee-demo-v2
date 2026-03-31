@@ -3,7 +3,7 @@
  * Hold to pour milk. Release as close to 8.88 seconds as possible.
  */
 
-import { getNickname, getCompany } from '/shared/utils.js'
+import { getNickname, setNickname, getCompany, setCompany } from '/shared/utils.js'
 import { vibrateShort, vibrateMedium, vibrateHeavy, vibratePattern } from '/shared/haptics.js'
 import { submitScore, fetchLeaderboard, renderLeaderboard } from '/shared/leaderboard.js'
 import { initLocale, getLocale } from '/shared/i18n.js'
@@ -196,10 +196,10 @@ function setRevealProgress(progress, elapsed) {
     el.style.opacity = groupProgress > 0 ? String(Math.min(1, groupProgress * 3)) : "0";
   });
 
-  // milk impact glow (keep from original)
-  const glowRad = Math.min(progress, 1) * 130 * 0.4;
-  milkGlow.setAttribute('r', Math.min(glowRad, 30));
-  milkGlow.style.opacity = state.phase === 'pouring' ? 0.6 : 0;
+  // milk impact glow — instant feedback on pour start
+  const glowRad = 20 + Math.min(progress, 1) * 40;
+  milkGlow.setAttribute('r', String(glowRad));
+  milkGlow.style.opacity = state.phase === 'pouring' ? '0.7' : '0';
 
   // Overflow distortion when past target — art warps and stays warped
   if (elapsed > TARGET) {
@@ -316,7 +316,8 @@ function easeOutCubic(t) {
  * At t=0.2 (~1.8s) ~8% revealed. At t=0.5 (~4.4s) ~35%. Fills at t=1.0.
  */
 function revealCurve(t) {
-  return Math.pow(t, 1.8)
+  // Start quick so users see immediate feedback, ease out toward the end
+  return Math.pow(t, 0.7)
 }
 
 // --- Pour Start ---
@@ -326,7 +327,7 @@ function startPour() {
   state.startTime = performance.now()
   state.elapsed = 0
 
-  pourStream.classList.add('active')
+  if (pourStream) pourStream.classList.add('active')
   steamContainer.classList.add('active')
   bagua.classList.add('pouring')
   pourBtn.classList.add('pressing')
@@ -345,7 +346,7 @@ function endPour() {
   state.phase = 'result'
 
   cancelAnimationFrame(state.animFrame)
-  pourStream.classList.remove('active')
+  if (pourStream) pourStream.classList.remove('active')
   pourBtn.classList.remove('pressing')
   releaseDrag()
 
