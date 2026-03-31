@@ -2,20 +2,11 @@
    8.88 LATTE ART GAME STYLES
    ============================================ */
 
-/* --- Foliage border canvas --- */
-#foliage-canvas {
-  position: fixed;
-  inset: 0;
-  z-index: 11;
-  pointer-events: none;
-  filter: saturate(0.5) brightness(0.9);
-}
-
 /* --- Layered background: wood + plants + petals --- */
 .game-screen {
   background:
-    linear-gradient(180deg, rgba(10, 6, 4, 0.7) 0%, rgba(10, 6, 4, 0.5) 40%, rgba(10, 6, 4, 0.5) 60%, rgba(10, 6, 4, 0.7) 100%),
-    url('/assets/bg_final/bg_wood_00000.png') center center / cover;
+    linear-gradient(180deg, rgba(10, 6, 4, 0.3) 0%, rgba(10, 6, 4, 0.15) 40%, rgba(10, 6, 4, 0.15) 60%, rgba(10, 6, 4, 0.3) 100%),
+    url('/assets/bg_final/bg_wood_00000.webp') center center / cover;
   background-color: var(--wood-base);
   position: fixed;
   inset: 0;
@@ -89,18 +80,18 @@
   position: fixed;
   inset: 0;
   z-index: 18;
-  background: url('/assets/bg_final/bg_plants_00000.png') center center / cover no-repeat;
+  background: url('/assets/bg_final/bg_plants_00000.webp') center center / cover no-repeat;
   pointer-events: none;
-  opacity: 0.6;
+  opacity: 1;
 }
 
 .bg-petals {
   position: fixed;
   inset: 0;
   z-index: 19;
-  background: url('/assets/bg_final/bg_pedal_00000.png') center center / cover no-repeat;
+  background: url('/assets/bg_final/bg_pedal_00000.webp') center center / cover no-repeat;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 1;
 }
 
 /* --- Ornate cup image (sits under coffee SVG, above bagua) ---

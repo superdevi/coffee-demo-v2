@@ -7,49 +7,9 @@ import { getNickname, getCompany } from '/shared/utils.js'
 import { vibrateShort, vibrateMedium, vibrateHeavy, vibratePattern } from '/shared/haptics.js'
 import { submitScore, fetchLeaderboard, renderLeaderboard } from '/shared/leaderboard.js'
 import { initLocale, getLocale } from '/shared/i18n.js'
-import { initFoliageBorder } from '/shared/foliage-border.js'
 import { sfxPourStart, sfxPourLoop, sfxTick, sfxHeartbeat, sfxRelease, sfxWarning, sfxClick, sfxKeystroke } from '/shared/sfx.js'
 
-let foliage = null
 let stopPourLoop = null
-
-// --- BG style & test mode from URL params ---
-const params = new URLSearchParams(window.location.search)
-let bgStyle = parseInt(params.get('bg') || '1')
-
-function applyBgStyle(style) {
-  bgStyle = style
-  const plants = document.querySelector('.bg-plants')
-  const petals = document.querySelector('.bg-petals')
-  const foliageCanvas = document.getElementById('foliage-canvas')
-
-  if (style === 2) {
-    // Style 2: static plants + petals, no animated foliage
-    if (plants) plants.style.display = ''
-    if (petals) petals.style.display = ''
-    if (foliageCanvas) foliageCanvas.style.display = 'none'
-  } else {
-    // Style 1: animated foliage canvas, no static overlays
-    if (plants) plants.style.display = 'none'
-    if (petals) petals.style.display = 'none'
-    if (foliageCanvas) foliageCanvas.style.display = ''
-  }
-
-  // Update toggle button label
-  const btn = document.getElementById('bg-toggle')
-  if (btn) btn.textContent = `BG ${style}`
-}
-
-// Init foliage for style 1
-if (bgStyle === 1) {
-  initFoliageBorder(document.getElementById('foliage-canvas')).then(f => { foliage = f })
-} else {
-  // Still init but hide canvas
-  initFoliageBorder(document.getElementById('foliage-canvas')).then(f => { foliage = f })
-}
-
-// Apply initial style
-applyBgStyle(bgStyle)
 
 const TARGET = 8.88
 const MAX_TIME = 12
@@ -374,7 +334,7 @@ function startPour() {
   vibrateMedium()
   sfxPourStart()
   stopPourLoop = sfxPourLoop()
-  if (foliage) foliage.setRustling(true)
+
 
   state.animFrame = requestAnimationFrame(gameLoop)
 }
@@ -388,7 +348,7 @@ function endPour() {
   pourStream.classList.remove('active')
   pourBtn.classList.remove('pressing')
   releaseDrag()
-  if (foliage) foliage.setRustling(false)
+
   if (stopPourLoop) { stopPourLoop(); stopPourLoop = null }
   sfxRelease(Math.abs(state.elapsed - TARGET))
   bagua.classList.remove('pouring')
@@ -487,73 +447,48 @@ async function downloadWallpaper() {
   canvas.width = W
   canvas.height = H
   const ctx = canvas.getContext('2d')
-  const cx = W / 2, cy = H * 0.42
+  const cx = W / 2
 
-  // 1. Wood background
+  // 1. Base image (with QR code baked in)
   try {
-    const woodImg = await loadImage('/assets/bg_final/bg_wood_00000.png')
-    ctx.drawImage(woodImg, 0, 0, W, H)
+    const baseImg = await loadImage('/assets/bg_final/bg_share_base.png')
+    ctx.drawImage(baseImg, 0, 0, W, H)
   } catch {
     ctx.fillStyle = '#2a1e18'
     ctx.fillRect(0, 0, W, H)
   }
 
-  // Dark overlay for readability
-  const darkGrad = ctx.createLinearGradient(0, 0, 0, H)
-  darkGrad.addColorStop(0, 'rgba(10,6,4,0.7)')
-  darkGrad.addColorStop(0.4, 'rgba(10,6,4,0.5)')
-  darkGrad.addColorStop(0.6, 'rgba(10,6,4,0.5)')
-  darkGrad.addColorStop(1, 'rgba(10,6,4,0.7)')
-  ctx.fillStyle = darkGrad
+  // 2. Cup circle area — subtle dark disc behind art for contrast
+  const cupCy = H * 0.33
+  const cupSize = 420
+  const discGrad = ctx.createRadialGradient(cx, cupCy, cupSize * 0.3, cx, cupCy, cupSize * 0.55)
+  discGrad.addColorStop(0, 'rgba(42, 30, 24, 0.6)')
+  discGrad.addColorStop(1, 'rgba(42, 30, 24, 0)')
+  ctx.fillStyle = discGrad
   ctx.fillRect(0, 0, W, H)
 
-  // 2. Plants overlay (if bg style 2)
-  if (bgStyle === 2) {
-    try {
-      const plantsImg = await loadImage('/assets/bg_final/bg_plants_00000.png')
-      ctx.globalAlpha = 0.6
-      ctx.drawImage(plantsImg, 0, 0, W, H)
-      ctx.globalAlpha = 1
-    } catch {}
-    try {
-      const petalsImg = await loadImage('/assets/bg_final/bg_pedal_00000.png')
-      ctx.globalAlpha = 0.5
-      ctx.drawImage(petalsImg, 0, 0, W, H)
-      ctx.globalAlpha = 1
-    } catch {}
-  }
-
-  // 3. Bagua glow
-  const glowGrad = ctx.createRadialGradient(cx, cy, 50, cx, cy, 320)
-  glowGrad.addColorStop(0, 'rgba(88, 230, 218, 0.12)')
-  glowGrad.addColorStop(0.5, 'rgba(88, 230, 218, 0.05)')
-  glowGrad.addColorStop(1, 'transparent')
-  ctx.fillStyle = glowGrad
-  ctx.fillRect(0, 0, W, H)
-
-  // 4. Ornate cup image
+  // 3. Ornate cup image
   try {
-    const cupBgImg = await loadImage('/assets/bg_final/bg_cup_00000.png')
+    const cupBgImg = await loadImage('/assets/bg_final/bg_cup_00000.webp')
     const cupBgSize = 550
     ctx.drawImage(cupBgImg,
       cupBgImg.width * 0.2, cupBgImg.height * 0.3, cupBgImg.width * 0.6, cupBgImg.width * 0.6,
-      cx - cupBgSize / 2, cy - cupBgSize / 2, cupBgSize, cupBgSize
+      cx - cupBgSize / 2, cupCy - cupBgSize / 2, cupBgSize, cupBgSize
     )
   } catch {}
 
-  // 5. Latte art SVG
+  // 4. Latte art SVG
   const cupSvg = $('.cup-svg')
   const svgData = new XMLSerializer().serializeToString(cupSvg)
   const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' })
   const svgUrl = URL.createObjectURL(svgBlob)
   try {
     const svgImg = await loadImage(svgUrl)
-    const cupSize = 420
-    ctx.drawImage(svgImg, cx - cupSize / 2, cy - cupSize / 2, cupSize, cupSize)
+    ctx.drawImage(svgImg, cx - cupSize / 2, cupCy - cupSize / 2, cupSize, cupSize)
   } catch {}
   URL.revokeObjectURL(svgUrl)
 
-  // 6. Score + grade text
+  // 5. Score + grade text (above cup)
   if (state.lastResult) {
     const { elapsed, grade } = state.lastResult
     const locale = getLocale()
@@ -565,55 +500,46 @@ async function downloadWallpaper() {
     ctx.font = '300 72px "JetBrains Mono", monospace'
     ctx.shadowColor = 'rgba(45, 212, 168, 0.4)'
     ctx.shadowBlur = 30
-    ctx.fillText(elapsed.toFixed(2), cx, cy - 280)
+    ctx.fillText(elapsed.toFixed(2), cx, cupCy - 280)
     ctx.shadowBlur = 0
 
     // Grade
     ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
     ctx.font = '300 28px Inter, sans-serif'
     ctx.letterSpacing = '0.2em'
-    ctx.fillText(locale === 'zh' ? grade.cn : grade.en, cx, cy - 230)
+    ctx.fillText(locale === 'zh' ? grade.cn : grade.en, cx, cupCy - 230)
   }
 
-  // 7. User info at bottom
+  // 6. User info (between cup and QR code)
   const nickname = getNickname()
   const company = getCompany()
   const locale = getLocale()
+  const infoY = cupCy + cupSize / 2 + 80
 
   ctx.textAlign = 'center'
   ctx.shadowBlur = 0
 
   // "CREATED BY" label
-  ctx.fillStyle = 'rgba(232, 201, 160, 0.35)'
-  ctx.font = '300 18px Inter, sans-serif'
-  ctx.fillText(locale === 'zh' ? '作者' : 'CREATED BY', cx, H - 200)
+  ctx.fillStyle = 'rgba(232, 201, 160, 0.5)'
+  ctx.font = '300 20px Inter, sans-serif'
+  ctx.fillText(locale === 'zh' ? '创作者' : 'CREATED BY', cx, infoY)
 
   // Username
   if (nickname) {
     ctx.fillStyle = '#ffffff'
-    ctx.font = '400 32px Inter, sans-serif'
+    ctx.font = '500 36px Inter, sans-serif'
     ctx.shadowColor = 'rgba(232, 201, 160, 0.3)'
     ctx.shadowBlur = 12
-    ctx.fillText(nickname.toUpperCase(), cx, H - 160)
+    ctx.fillText(nickname.toUpperCase(), cx, infoY + 50)
     ctx.shadowBlur = 0
   }
 
   // Company
   if (company) {
-    ctx.fillStyle = 'rgba(232, 201, 160, 0.5)'
-    ctx.font = '300 22px Inter, sans-serif'
-    ctx.fillText(company.toUpperCase(), cx, H - 125)
+    ctx.fillStyle = 'rgba(232, 201, 160, 0.6)'
+    ctx.font = '300 24px Inter, sans-serif'
+    ctx.fillText(company.toUpperCase(), cx, infoY + 90)
   }
-
-  // WeChat ID line
-  ctx.fillStyle = 'rgba(45, 212, 168, 0.4)'
-  ctx.font = '300 16px Inter, sans-serif'
-  ctx.fillText('MAXMAYONNAISE', cx, H - 85)
-
-  // 8.88 branding
-  ctx.fillStyle = 'rgba(232, 201, 160, 0.25)'
-  ctx.font = '200 14px Inter, sans-serif'
-  ctx.fillText('8.88 · SUPER DEVI', cx, H - 50)
 
   // Save to album via Web Share API (mobile), fallback to download
   const filename = `latte-art-${Date.now()}.png`
@@ -780,15 +706,6 @@ window.addEventListener('localechange', () => {
   }
   updateUserPourLabel()
 })
-
-// --- BG toggle button ---
-const bgToggle = document.getElementById('bg-toggle')
-if (bgToggle) {
-  bgToggle.addEventListener('click', () => {
-    const next = bgStyle === 1 ? 2 : 1
-    applyBgStyle(next)
-  })
-}
 
 // --- User panel ---
 const userPanel = document.getElementById('user-panel')
