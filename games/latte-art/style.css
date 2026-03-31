@@ -642,10 +642,10 @@
 
 /* --- Username pour label (above timer) --- */
 .user-pour-label {
-  font-size: 0.75rem;
-  font-weight: 300;
+  font-size: 1rem;
+  font-weight: 400;
   letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.85);
   text-shadow: 0 0 10px rgba(232, 201, 160, 0.3), 0 1px 6px rgba(0, 0, 0, 0.5);
   margin-bottom: var(--space-sm);
 }

@@ -449,35 +449,32 @@ async function downloadWallpaper() {
   const ctx = canvas.getContext('2d')
   const cx = W / 2
 
-  // 1. Base image (with QR code baked in)
+  // 1. Base image (with QR code baked in) — cover-fit to preserve aspect ratio
   try {
     const baseImg = await loadImage('/assets/bg_final/bg_share_base.png')
-    ctx.drawImage(baseImg, 0, 0, W, H)
+    const imgRatio = baseImg.width / baseImg.height
+    const canvasRatio = W / H
+    let sx = 0, sy = 0, sw = baseImg.width, sh = baseImg.height
+    if (imgRatio < canvasRatio) {
+      // Image is taller — crop top/bottom
+      sh = baseImg.width / canvasRatio
+      sy = (baseImg.height - sh) / 2
+    } else {
+      // Image is wider — crop left/right
+      sw = baseImg.height * canvasRatio
+      sx = (baseImg.width - sw) / 2
+    }
+    ctx.drawImage(baseImg, sx, sy, sw, sh, 0, 0, W, H)
   } catch {
     ctx.fillStyle = '#2a1e18'
     ctx.fillRect(0, 0, W, H)
   }
 
-  // 2. Cup circle area — subtle dark disc behind art for contrast
-  const cupCy = H * 0.33
-  const cupSize = 420
-  const discGrad = ctx.createRadialGradient(cx, cupCy, cupSize * 0.3, cx, cupCy, cupSize * 0.55)
-  discGrad.addColorStop(0, 'rgba(42, 30, 24, 0.6)')
-  discGrad.addColorStop(1, 'rgba(42, 30, 24, 0)')
-  ctx.fillStyle = discGrad
-  ctx.fillRect(0, 0, W, H)
+  // Cup is baked into base image — center ~55% from top, liquid ~500px
+  const cupCy = H * 0.50
+  const cupSize = 480
 
-  // 3. Ornate cup image
-  try {
-    const cupBgImg = await loadImage('/assets/bg_final/bg_cup_00000.webp')
-    const cupBgSize = 550
-    ctx.drawImage(cupBgImg,
-      cupBgImg.width * 0.2, cupBgImg.height * 0.3, cupBgImg.width * 0.6, cupBgImg.width * 0.6,
-      cx - cupBgSize / 2, cupCy - cupBgSize / 2, cupBgSize, cupBgSize
-    )
-  } catch {}
-
-  // 4. Latte art SVG
+  // 2. Latte art SVG — centered
   const cupSvg = $('.cup-svg')
   const svgData = new XMLSerializer().serializeToString(cupSvg)
   const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' })
@@ -488,57 +485,35 @@ async function downloadWallpaper() {
   } catch {}
   URL.revokeObjectURL(svgUrl)
 
-  // 5. Score + grade text (above cup)
+  // 3. Text above cup: username → score → grade (top to bottom)
+  const nickname = getNickname()
+  const locale = getLocale()
+  const scoreY = cupCy - cupSize / 2 - 180
+  ctx.textAlign = 'center'
+
+  // Username (above score)
+  if (nickname) {
+    ctx.fillStyle = 'rgba(232, 201, 160, 0.7)'
+    ctx.font = '500 48px Inter, sans-serif'
+    ctx.fillText(nickname.toUpperCase(), cx, scoreY - 100)
+  }
+
   if (state.lastResult) {
     const { elapsed, grade } = state.lastResult
-    const locale = getLocale()
-
-    ctx.textAlign = 'center'
 
     // Time
     ctx.fillStyle = '#ffffff'
-    ctx.font = '300 72px "JetBrains Mono", monospace'
+    ctx.font = '300 96px "JetBrains Mono", monospace'
     ctx.shadowColor = 'rgba(45, 212, 168, 0.4)'
     ctx.shadowBlur = 30
-    ctx.fillText(elapsed.toFixed(2), cx, cupCy - 280)
+    ctx.fillText(elapsed.toFixed(2), cx, scoreY)
     ctx.shadowBlur = 0
 
     // Grade
     ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
-    ctx.font = '300 28px Inter, sans-serif'
+    ctx.font = '300 36px Inter, sans-serif'
     ctx.letterSpacing = '0.2em'
-    ctx.fillText(locale === 'zh' ? grade.cn : grade.en, cx, cupCy - 230)
-  }
-
-  // 6. User info (between cup and QR code)
-  const nickname = getNickname()
-  const company = getCompany()
-  const locale = getLocale()
-  const infoY = cupCy + cupSize / 2 + 80
-
-  ctx.textAlign = 'center'
-  ctx.shadowBlur = 0
-
-  // "CREATED BY" label
-  ctx.fillStyle = 'rgba(232, 201, 160, 0.5)'
-  ctx.font = '300 20px Inter, sans-serif'
-  ctx.fillText(locale === 'zh' ? '创作者' : 'CREATED BY', cx, infoY)
-
-  // Username
-  if (nickname) {
-    ctx.fillStyle = '#ffffff'
-    ctx.font = '500 36px Inter, sans-serif'
-    ctx.shadowColor = 'rgba(232, 201, 160, 0.3)'
-    ctx.shadowBlur = 12
-    ctx.fillText(nickname.toUpperCase(), cx, infoY + 50)
-    ctx.shadowBlur = 0
-  }
-
-  // Company
-  if (company) {
-    ctx.fillStyle = 'rgba(232, 201, 160, 0.6)'
-    ctx.font = '300 24px Inter, sans-serif'
-    ctx.fillText(company.toUpperCase(), cx, infoY + 90)
+    ctx.fillText(locale === 'zh' ? grade.cn : grade.en, cx, scoreY + 55)
   }
 
   // Save to album via Web Share API (mobile), fallback to download
@@ -687,7 +662,7 @@ function updateUserPourLabel() {
   if (name) {
     label.textContent = locale === 'zh' ? `${name.toUpperCase()} 的拉花` : `${name.toUpperCase()}'S POUR`
   } else {
-    label.textContent = locale === 'zh' ? '拉花挑战' : 'LATTE ART'
+    label.textContent = locale === 'zh' ? '拉花挑战8.88' : 'TARGET 8.88'
   }
 }
 updateUserPourLabel()
@@ -724,7 +699,7 @@ if (userBtn && userPanel) {
   })
 
   // Save on input
-  panelNickname.addEventListener('input', () => setNickname(panelNickname.value))
+  panelNickname.addEventListener('input', () => { setNickname(panelNickname.value); updateUserPourLabel() })
   panelCompany.addEventListener('input', () => setCompany(panelCompany.value))
 
   // Close
