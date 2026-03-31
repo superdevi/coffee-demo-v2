@@ -10,11 +10,15 @@
 </head>
 <body>
   <a href="/" class="back-btn">←</a>
+  <button id="bg-toggle" class="bg-toggle-btn">BG 1</button>
   <div class="bg-glow"></div>
   <div id="end-glow" class="end-glow"></div>
 
   <!-- ====== SINGLE SCREEN (toggles .result class) ====== -->
   <div id="game-screen" class="screen game-screen">
+    <!-- Botanical overlay layers (inside game-screen for stacking context) -->
+    <div class="bg-plants"></div>
+    <div class="bg-petals"></div>
     <canvas id="foliage-canvas"></canvas>
 
     <!-- TOP SLOT: timer (game) / score panel (result) -->
@@ -56,15 +60,18 @@
         </g>
         <circle cx="512" cy="512" r="160" stroke="#58e6da" stroke-width="2" opacity="0.6" fill="none"/>
       </svg>
+      <!-- Ornate cup (below coffee, above bagua) -->
+      <img class="bg-cup" src="/assets/bg_final/bg_cup_00000.png" alt="" draggable="false">
       <div class="heartbeat-ring"></div>
       <div class="overflow-ring"></div>
 
-      <!-- Milk pour (organic shape) -->
+      <!-- Milk pour (organic shape) + pour button on top -->
       <svg class="pour-stream" viewBox="0 0 30 100" xmlns="http://www.w3.org/2000/svg">
-        <path class="milk-flow" d="M15,0 C13,15 10,25 8,40 C6,55 12,65 15,75 C18,65 24,55 22,40 C20,25 17,15 15,0Z" fill="white" opacity="0.85"/>
-        <path class="milk-flow-highlight" d="M14,5 C13,18 11,30 10,45 C9,55 13,62 15,70" stroke="white" stroke-width="2" opacity="0.4" fill="none" stroke-linecap="round"/>
-        <ellipse class="milk-drip" cx="15" cy="88" rx="8" ry="5" fill="white" opacity="0.5"/>
+        <ellipse class="milk-drip" cx="15" cy="5" rx="8" ry="5" fill="white" opacity="0.5"/>
+        <path class="milk-flow" d="M15,10 C13,25 10,35 8,50 C6,65 12,75 15,85 C18,75 24,65 22,50 C20,35 17,25 15,10Z" fill="white" opacity="0.85"/>
+        <path class="milk-flow-highlight" d="M14,15 C13,28 11,40 10,55 C9,65 13,72 15,80" stroke="white" stroke-width="2" opacity="0.4" fill="none" stroke-linecap="round"/>
       </svg>
+      <button class="pour-btn phase-game" data-zh="倒奶" data-en="POUR">倒奶</button>
 
       <!-- Steam -->
       <div class="steam-container">
@@ -123,16 +130,11 @@
       </svg>
     </div>
 
-    <!-- BOTTOM SLOT: pour button (game) / actions (result) -->
+    <!-- BOTTOM SLOT: actions (result only) -->
     <div class="bottom-slot">
-      <!-- Game mode: pour button -->
-      <div class="pour-btn-area phase-game">
-        <button class="pour-btn" data-zh="倒奶" data-en="POUR">倒奶</button>
-      </div>
-
-      <!-- Result mode: leaderboard + actions -->
+      <!-- Result mode: swipe hint + actions -->
       <div class="result-bottom phase-result">
-        <div id="leaderboard-container"></div>
+        <div class="swipe-hint" data-zh="← 滑动查看排行榜" data-en="← SWIPE FOR LEADERBOARD">← 滑动查看排行榜</div>
         <div class="result-actions">
           <button id="btn-again" class="cyber-btn cyber-btn--primary" data-zh="再来" data-en="AGAIN">再来</button>
           <button id="btn-download" class="cyber-btn cyber-btn--ghost btn-download" data-zh="保存" data-en="SAVE">
@@ -141,6 +143,17 @@
           </button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Leaderboard slide panel (swipe left to open) -->
+  <div id="lb-panel" class="lb-panel">
+    <div class="lb-panel-header">
+      <button id="lb-panel-close" class="lb-panel-close">→</button>
+      <div class="lb-panel-title" data-zh="排行榜" data-en="LEADERBOARD">排行榜</div>
+    </div>
+    <div class="lb-panel-scroll">
+      <div id="leaderboard-container"></div>
     </div>
   </div>
 
