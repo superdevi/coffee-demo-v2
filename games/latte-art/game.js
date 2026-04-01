@@ -573,16 +573,16 @@ async function downloadWallpaper() {
   if (isIOS) {
     canvas.toBlob(async (blob) => {
       if (navigator.share && navigator.canShare) {
-        const file = new File([blob], `latte-art-${Date.now()}.png`, { type: 'image/png' })
+        const file = new File([blob], `latte-art-${Date.now()}.jpg`, { type: 'image/jpeg' })
         const shareData = { files: [file] }
         if (navigator.canShare(shareData)) {
           try { await navigator.share(shareData); return } catch (e) {}
         }
       }
-    }, 'image/png')
+    }, 'image/jpeg', 0.9)
   } else {
     // Android/Huawei: open in new tab for long-press save
-    const dataUrl = canvas.toDataURL('image/png')
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9)
     const w = window.open('')
     if (w) {
       w.document.write(`
