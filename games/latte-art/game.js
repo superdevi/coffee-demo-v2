@@ -609,7 +609,9 @@ pourBtn.addEventListener('pointercancel', () => {
 })
 
 // Prevent context menu on long press
+// Block all long-press behaviors (Huawei browser screenshot, context menus, etc.)
 pourBtn.addEventListener('contextmenu', (e) => e.preventDefault())
+document.addEventListener('contextmenu', (e) => e.preventDefault())
 
 // Prevent scrolling
 document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false })
