@@ -567,35 +567,29 @@ async function downloadWallpaper() {
     ctx.fillText(locale === 'zh' ? grade.cn : grade.en, cx, scoreY + 55)
   }
 
-  // Save: iOS uses Web Share API, Android opens image in new tab
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-
-  if (isIOS) {
-    canvas.toBlob(async (blob) => {
-      if (navigator.share && navigator.canShare) {
-        const file = new File([blob], `latte-art-${Date.now()}.jpg`, { type: 'image/jpeg' })
-        const shareData = { files: [file] }
-        if (navigator.canShare(shareData)) {
-          try { await navigator.share(shareData); return } catch (e) {}
+  // Save via Web Share API (mobile), fallback to download
+  const filename = `latte-art-${Date.now()}.jpg`
+  canvas.toBlob(async (blob) => {
+    if (navigator.share && navigator.canShare) {
+      const file = new File([blob], filename, { type: 'image/jpeg' })
+      const shareData = { files: [file] }
+      if (navigator.canShare(shareData)) {
+        try {
+          await navigator.share(shareData)
+          return
+        } catch (e) {
+          // User cancelled or share failed — fall through to download
         }
       }
-    }, 'image/jpeg', 0.9)
-  } else {
-    // Android/Huawei: open in new tab for long-press save
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.9)
-    const w = window.open('')
-    if (w) {
-      w.document.write(`
-        <html><head><title>长按保存图片</title>
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <style>*{margin:0;padding:0}body{background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh}
-        img{max-width:90%;max-height:80vh;border-radius:8px}
-        p{color:rgba(255,255,255,0.6);font:14px sans-serif;margin-top:16px}</style></head>
-        <body><img src="${dataUrl}"><p>${getLocale() === 'zh' ? '长按图片保存到相册' : 'Long press to save'}</p></body></html>
-      `)
-      w.document.close()
     }
-  }
+    // Fallback: trigger download
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.download = filename
+    link.href = url
+    link.click()
+    URL.revokeObjectURL(url)
+  }, 'image/jpeg', 0.9)
 }
 
 // --- Event Binding ---
