@@ -16,7 +16,10 @@
       "Bash(find /c/Users/steff/Documents/GitHub/coffee-demo-v2 -maxdepth 2 -name *.png -o -name *.jpg -o -name *.svg -o -name *.webp -o -name *.pdf)",
       "mcp__Claude_Preview__preview_start",
       "Bash(git checkout:*)",
-      "Bash(gh pr:*)"
+      "Bash(gh pr:*)",
+      "Bash(npm run:*)",
+      "Bash(sed \"s|href=\"\"./style.css\"\"|href=\"\"/games/latte-art/style.css\"\"|; s|src=\"\"./game.js\"\"|src=\"\"/games/latte-art/game.js\"\"|\" C:UserssteffDocumentsGitHubcoffee-demo-v2gameslatte-artindex.html)",
+      "Read(//tmp/**)"
     ]
   }
 }
