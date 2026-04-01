@@ -502,7 +502,7 @@ async function downloadWallpaper() {
 
   // 1. Base image (with QR code baked in) — cover-fit to preserve aspect ratio
   try {
-    const baseImg = await loadImage('/assets/bg_final/bg_share_base.png')
+    const baseImg = await loadImage('/assets/bg_final/bg_share_base.webp')
     const imgRatio = baseImg.width / baseImg.height
     const canvasRatio = W / H
     let sx = 0, sy = 0, sw = baseImg.width, sh = baseImg.height
